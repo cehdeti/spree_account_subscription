@@ -13,7 +13,6 @@ class Spree::AccountSubscription < ActiveRecord::Base
 
   has_secure_token
 
-  after_create :claim_owner_seat
 
   state_machine :state, initial: :active do
     event :cancel do
@@ -93,9 +92,6 @@ class Spree::AccountSubscription < ActiveRecord::Base
     seat
   end
 
-  def claim_owner_seat
-    take_seat self.user_id
-  end
 
   private
 
