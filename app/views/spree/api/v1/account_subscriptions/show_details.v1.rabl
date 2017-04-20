@@ -8,4 +8,4 @@ node(:start) { @account_subcription.start_datetime}
 node(:end) { @account_subcription.end_datetime}
 node(:token) { @account_subcription.token }
 node(:num_seats) {@account_subcription.num_seats}
-node(:seats_taken) {@account_subcription.seats_taken}
+node(:seats_taken) {@account_subcription.order_number}

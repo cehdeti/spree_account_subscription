@@ -32,6 +32,14 @@ class Spree::AccountSubscription < ActiveRecord::Base
     end
   end
 
+  def order_number
+    num=''
+    if self.order
+      num = self.order.number
+    end
+    num
+  end
+
   def ended?
     if end_datetime?
       DateTime.now > end_datetime
