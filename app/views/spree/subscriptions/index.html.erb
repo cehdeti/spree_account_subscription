@@ -1,0 +1,71 @@
+
+<h2>My Current Subscriptions</h2>
+
+<% if @all_subscriptions.length %>
+
+
+  <div class="row">
+
+    <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
+    <div class="col-xs-12 col-md-2"><h5>Seats</h5></div>
+    <div class="col-xs-12 col-md-2"><h5>Status</h5></div>
+    <div class="col-xs-12 col-md-2"><h5>Expires</h5></div>
+    <div class="col-xs-12 col-md-3"><h5>Actions</h5></div>
+
+
+  </div>
+
+  <% @all_subscriptions.each do |sub| %>
+
+  <div class="row">
+
+    <div class="col-xs-12 col-md-3">
+      <a href="/subscriptions/<%=sub.id%>"><%= sub.product.name %></a>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <%= sub.num_seats %>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <%= sub.state %>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <%= sub.end_datetime.strftime(" %m/%d/%Y") %>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      <a class="button button-sm" href="/subscriptions/<%=sub.id%>">Manage</a>
+    </div>
+
+  </div>
+
+  <%end%>
+
+<% else %>
+  <p>You do not currently have any subscriptions to manage</p>
+<% end %>
+
+
+<h2>My Current Subscription Seats</h2>
+
+<% if @seats.length %>
+
+  <div class="row">
+
+    <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
+    <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
+    <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
+    <div class="col-xs-12 col-md-3"><h5>Actions</h5></div>
+  </div>
+
+  <% @seats.each do | seat | %>
+    <div class="row">
+      <div class="col-xs-12 col-md-3">Seat for <%= seat.account_subscription.product.name %></div>
+      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.state %></div>
+      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
+      <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=seat.account_subscription.id%>/seats/<%=seat.id%>/">Renew</a></div>
+    </div>
+  <% end %>
+
+<% else %>
+  <p>You do not currenty have any subscription seats</p>
+
+<% end %>

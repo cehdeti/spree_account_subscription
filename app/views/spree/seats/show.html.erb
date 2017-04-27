@@ -1,0 +1,18 @@
+<h2>Subscription Seat</h2>
+
+
+
+<div class="row">
+
+  <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
+  <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
+  <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
+  <div class="col-xs-12 col-md-3"><h5>Actions</h5></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-3">Seat for <%= @seat.account_subscription.product.name %></div>
+  <div class="col-xs-12 col-md-3"><%= @seat.account_subscription.state %></div>
+  <div class="col-xs-12 col-md-3"><%= @seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
+  <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=@seat.account_subscription.id%>/seats/<%=@seat.id%>/">Renew</a></div>
+</div>
