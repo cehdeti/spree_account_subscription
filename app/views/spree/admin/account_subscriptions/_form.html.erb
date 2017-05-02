@@ -1,24 +1,43 @@
-<%= f.field_container :product do %>
-  <%= f.label :product_id, Spree.t(:product) %><br />
-  <%= f.select :product_id, @products %>
-  <br/>
-  <%= f.label :user_id, "User ID" %><br />
-  <%= f.number_field :user_id %>
-  <br/>
+<div class="row">
+  <div class="col-xs-12 col-md-8">
 
-    <%= f.label :start_datetime, "Start Date" %><br />
-  <%= f.datetime_select :start_datetime %>
-  <br/>
-  <%= f.label :end_datetime, "End Date" %><br />
-  <%= f.datetime_select :end_datetime %>
-  <br/>
-  <br/>
-  <%= f.label :num_seats, "Number of Seats" %><br />
-  <%= f.number_field :num_seats %>
-  <br/><br/>
-  <%= f.label :token, "Token" %><br />
-  <%= f.text_field :token %>
+    <%= f.field_container :product do %>
+        <%= f.label :product_id, Spree.t(:product) %><br />
+        <%= f.select :product_id, @products, {}, {:class=>'select2'} %>
+        <br/>
+        <%= f.label :user_id, "User" %><br />
+        <%= f.collection_select :user_id, @users, :id, :email, {},{:class => 'select2'}  %>
+
+        <br/>
+
+        <%= f.label :is_renewal, "Is Renewal" %><br />
+        <%= f.check_box :is_renewal %>
+
+        <br/>
+
+        <%= f.label :renewing_subscription_id, "Subscription this renews" %><br />
+        <%= f.collection_select :renewing_subscription_id, Spree::AccountSubscription.all, :id, :description, {:include_blank=>true},{:class => 'select2'}  %>
 
 
-  <%= f.error_message_on :product %>
-<% end %>
+
+        <br/>
+
+        <%= f.label :start_datetime, "Start Date" %><br />
+        <%= f.datetime_select :start_datetime %>
+        <br/>
+        <%= f.label :end_datetime, "End Date" %><br />
+        <%= f.datetime_select :end_datetime %>
+        <br/>
+        <br/>
+        <%= f.label :num_seats, "Number of Seats" %><br />
+        <%= f.number_field :num_seats %>
+        <br/><br/>
+        <%= f.label :token, "Token" %><br />
+        <%= f.text_field :token %>
+
+
+        <%= f.error_message_on :product %>
+    <% end %>
+  </div>
+</div>
+

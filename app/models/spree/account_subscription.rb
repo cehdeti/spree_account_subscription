@@ -86,6 +86,11 @@ class Spree::AccountSubscription < ActiveRecord::Base
     seats_taken < num_seats
   end
 
+
+  def can_renew_seat(email)
+    true
+  end
+
   def get_seat( user_id )
     Spree::SubscriptionSeat.find_by(user_id:user_id, account_subscription:self)
   end
@@ -102,6 +107,15 @@ class Spree::AccountSubscription < ActiveRecord::Base
     seat
   end
 
+
+  def description
+    desc = "expires #{self.end_datetime} token: #{self.token}"
+    if self.user.present?
+      desc = "#{self.user.email} expires #{self.end_datetime} token: #{self.token}"
+    else
+      desc
+    end
+  end
 
   private
 
@@ -126,7 +140,6 @@ class Spree::AccountSubscription < ActiveRecord::Base
     old_subscription.update_attribute(:end_datetime, new_end_datetime)
     old_subscription
   end
-
 
 
 
