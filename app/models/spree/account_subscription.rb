@@ -3,6 +3,8 @@ require 'has_secure_token'
 class Spree::AccountSubscription < ActiveRecord::Base
   belongs_to :product, class_name: 'Spree::Product'
 
+  has_one :spree_account_subscription, foreign_key: 'renewing_subscription_id'
+
   belongs_to :user, class_name: Spree.user_class
 
   belongs_to :order, class_name: 'Spree::Order'

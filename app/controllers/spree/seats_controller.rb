@@ -17,6 +17,10 @@ module Spree
     end
 
 
+    def renew
+
+    end
+
     private
 
     def check_auth

@@ -1,18 +1,51 @@
 <h2>Subscription Seat</h2>
 
 
-
 <div class="row">
+  <div class="col-xs-12">
+    <div class="well">
 
-  <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Actions</h5></div>
+
+      <p>Below are the details of this subscription seat.</p>
+
+          <p>In order to renew this seat or extend the license period, you have two options: </p>
+          <ul>
+            <li>You may contact <a href="mailto:<%= @seat.account_subscription.user.email%>">the purchaser of your subscription</a> to have them renew the subscription.</li>
+            <li>You may also 'spin off' this seat into your own subscription, and renew it here:
+              <p><a class="button button-primary" href="/subscriptions/<%=@seat.account_subscription.id%>/seats/<%=@seat.id%>/renew/">Renew this seat</a></p>
+            </li>
+          </ul>
+
+    </div>
+  </div>
 </div>
 
 <div class="row">
-  <div class="col-xs-12 col-md-3">Seat for <%= @seat.account_subscription.product.name %></div>
-  <div class="col-xs-12 col-md-3"><%= @seat.account_subscription.state %></div>
-  <div class="col-xs-12 col-md-3"><%= @seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
-  <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=@seat.account_subscription.id%>/seats/<%=@seat.id%>/">Renew</a></div>
+
+  <div class="col-xs-12 col-md-2">
+    <h5>Product</h5>
+    <a href="/products/<%= @seat.account_subscription.product.slug%>"><%= @seat.account_subscription.product.name %></a>
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>User</h5>
+    <a href="mailto:<%=@seat.user.email%>"><%= @seat.user.email %></a>
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>Purchaser</h5>
+    <a href="mailto:<%=@seat.account_subscription.user.email%>"><%= @seat.account_subscription.user.email %></a>
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>Token</h5>
+    <span style="word-break: break-all;font-family: monospace;"><%= @seat.account_subscription.token%></span>
+
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>Status</h5>
+    <%= @seat.account_subscription.state %>
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>Expires</h5>
+    <%= @seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%>
+  </div>
 </div>
+

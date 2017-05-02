@@ -33,16 +33,18 @@ module Spree
     end
 
     def check_auth
-      sub = nil
-      if params[:id].present?
-        sub = Spree::AccountSubscription.find(params[:id])
-      end
 
-      if sub
-        authorize! :show,:edit, sub
-      else
-        authorize! :index, Spree::AccountSubscription
-      end
+      redirect_to '/', notice: 'Login Required' unless spree_current_user
+#      sub = nil
+#      if params[:id].present?
+#        sub = Spree::AccountSubscription.find(params[:id])
+#      end
+
+#      if sub
+#        authorize! :show,:edit, sub
+#      else
+#        authorize! :index
+#      end
 
     end
   end

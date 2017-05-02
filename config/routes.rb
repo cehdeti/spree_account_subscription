@@ -12,7 +12,9 @@ Spree::Core::Engine.routes.draw do
   end
 
   resources :subscriptions do
-    resources :seats
+    resources :seats do
+      get :renew
+    end
   end
 
 

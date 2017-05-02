@@ -29,27 +29,33 @@
 </div>
 
 
-<h3>Seat Details</h3>
+<h3>Seats Details</h3>
 
-<div class="row">
+<p>This subscription is using <%= @subscription.seats_taken %> of <%= @subscription.num_seats %> total seats</p>
 
-  <div class="col-xs-12 col-md-3"><h5>User</h5></div>
-  <div class="col-xs-12 col-md-3"><h5></h5></div>
-  <div class="col-xs-12 col-md-3"><h5></h5></div>
-  <div class="col-xs-12 col-md-3"><h5></h5></div>
-</div>
+<% if @subscription.seats_taken > 0 %>
 
-<% @subscription.subscription_seats.each do |seat| %>
   <div class="row">
 
-    <% if seat.user %>
-      <div class="col-xs-12 col-md-3"><%= seat.user.email %></div>
-      <div class="col-xs-12 col-md-3"></div>
-      <div class="col-xs-12 col-md-3"></div>
-      <div class="col-xs-12 col-md-3"></div>
-    <% else %>
-        <div class="col-xs-12 col-md-3">Seat not in use</div>
-    <% end %>
+    <div class="col-xs-12 col-md-3"><h5>User</h5></div>
+    <div class="col-xs-12 col-md-3"><h5></h5></div>
+    <div class="col-xs-12 col-md-3"><h5></h5></div>
+    <div class="col-xs-12 col-md-3"><h5></h5></div>
   </div>
+
+  <% @subscription.subscription_seats.each do |seat| %>
+    <div class="row">
+
+      <% if seat.user %>
+        <div class="col-xs-12 col-md-3"><%= seat.user.email %></div>
+        <div class="col-xs-12 col-md-3"></div>
+        <div class="col-xs-12 col-md-3"></div>
+        <div class="col-xs-12 col-md-3"></div>
+      <% else %>
+          <div class="col-xs-12 col-md-3">Seat not in use</div>
+      <% end %>
+    </div>
+
+  <% end %>
 
 <% end %>
