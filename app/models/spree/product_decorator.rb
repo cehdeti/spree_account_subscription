@@ -9,5 +9,14 @@ module Spree
     scope :unsubscribable, -> { where(subscribable: false) }
 
 
+    def renewal_variant
+      renewal=nil
+      self.variants.each do |variant |
+        if variant.options_text.include? 'Renewal'
+          renewal = variant
+        end
+      end
+      renewal
+    end
   end
 end

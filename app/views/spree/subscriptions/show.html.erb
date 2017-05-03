@@ -1,32 +1,72 @@
-<h2>Subscription Details</h2>
-
-
-<div class="row">
-
-  <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Purchaser</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
-  <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
-  
-</div>
-
+<h2>Your Subscription Details</h2>
 
 <div class="row">
 
   <div class="col-xs-12 col-md-3">
-    <%= @subscription.product.name %>
+    <h5>Product</h5>
+    <p><a href="/products/<%= @subscription.product.slug%>"><%= @subscription.product.name %></a></p>
   </div>
-  <div class="col-xs-12 col-md-3">
-    <%= @subscription.user.email %>
-  </div>
-  <div class="col-xs-12 col-md-3">
-    <%= @subscription.state %>
-  </div>
-  <div class="col-xs-12 col-md-3">
-    <%= @subscription.end_datetime.strftime(" %m/%d/%Y") %>
+  <div class="col-xs-12 col-md-2">
+    <h5>Seats</h5>
+    <p><%= @subscription.num_seats %></p>
   </div>
 
+  <div class="col-xs-12 col-md-2">
+    <h5>Status</h5>
+    <p><%= @subscription.state %></p>
+  </div>
+  <div class="col-xs-12 col-md-2">
+    <h5>Expires</h5>
+    <p><%= @subscription.end_datetime.strftime(" %m/%d/%Y") %></p>
+  </div>
+
+  <div class="col-xs-12 col-md-3">
+    <h5>Token</h5>
+    <p style="font-family: monospace;"><%= @subscription.token %></p>
+  </div>
 </div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="well">
+      <%= form_for :order, url: populate_orders_path do |f| %>
+          <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+
+            <div style="display: none;">
+
+            <%= radio_button_tag "variant_id", @product.renewal_variant.id,true,
+                                 'data-price' => @product.renewal_variant.price_in(current_currency).money,
+                                 'data-in-stock' => @product.renewal_variant.can_supply?,
+                                 'checked'=>'checked'
+            %>
+            </div>
+
+            <%= hidden_field_tag :quantity, @subscription.num_seats %>
+            <%= hidden_field_tag "options[renewing_subscription_id]", @subscription.id %>
+            <%= hidden_field_tag "options[is_spinoff]", false %>
+
+            <div class="col-xs-8">
+              <h5 class="product-section-title">Renew Full Subscription -  <%= pluralize(@subscription.num_seats, 'seat')%></h5>
+
+            </div>
+            <div class="col-xs-2">
+              <span class="lead selling">
+                <%= renewal_price(@product.renewal_variant, @subscription.num_seats)  %>
+              </span>
+              <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
+            </div>
+
+            <div class="col-xs-2">
+              <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
+                  <%= Spree.t(:add_to_cart) %>
+              <% end %>
+            </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 
 
 <h3>Seats Details</h3>

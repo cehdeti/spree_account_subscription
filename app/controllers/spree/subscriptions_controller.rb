@@ -6,6 +6,10 @@ module Spree
 
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
 
+    helper 'spree/products'
+    include Spree::Core::ControllerHelpers::Order
+
+    helper_method :renewal_price
 
     def index
       puts("ALL SUBSCRIPTION: #{@all_subscriptions}")
@@ -13,6 +17,7 @@ module Spree
 
     def show
       @subscription = Spree::AccountSubscription.includes(:subscription_seats).find(params[:id])
+      @product = @subscription.product
 
       if @subscription.user != spree_current_user
         @message = 'You do not have permissions to view this item'
@@ -45,6 +50,11 @@ module Spree
 #      else
 #        authorize! :index
 #      end
+
+
+      def renewal_price( variant , seats)
+        Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
+      end
 
     end
   end
