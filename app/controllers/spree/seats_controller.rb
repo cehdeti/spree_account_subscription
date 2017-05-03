@@ -23,10 +23,6 @@ module Spree
     end
 
 
-    def renew
-
-    end
-
 
 
     private

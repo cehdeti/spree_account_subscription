@@ -14,12 +14,15 @@ module Spree
 
 
     def renewal_check
-      puts("RENEWAL CHECK: #{self.variant}")
+      puts("RENEWAL CHECK: #{self.to_yaml}")
 
-      if self.renewing_seat_id
 
-        puts("validate renewing seat id!!!!! #{self.renewing_seat_id}")
 
+      if self.renewing_seat_id && self.is_spinoff
+        if self.quantity > 1
+          errors.add(:variant,'Single seat renewal is limited to a quantity of 1')
+          self.quantity = 1
+        end
       end
 
       true

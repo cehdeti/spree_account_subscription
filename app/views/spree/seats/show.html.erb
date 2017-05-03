@@ -6,13 +6,25 @@
     <div class="well">
 
 
+
+
       <p>Below are the details of this subscription seat.</p>
 
-          <p>In order to renew this seat or extend the license period, you have two options: </p>
-          <ul>
-            <li>You may contact <a href="mailto:<%= @seat.account_subscription.user.email%>">the purchaser of your subscription</a> to have them renew the subscription.</li>
-            <li>You may also 'spin off' this seat into your own subscription, and renew it below.</li>
-          </ul>
+
+      <% if @seat.user == @seat.account_subscription.user %>
+      <p>In order to renew this seat or extend the license period, you can manage your subscription purchase here: </p>
+      <p><a class="button button-primary" href="/subscriptions/<%= @seat.account_subscription.id %>">Manage subscription</a></p>
+
+      <% else %>
+
+
+      <p>In order to renew this seat or extend the license period, you have two options: </p>
+      <ul>
+        <li>You may contact <a href="mailto:<%= @seat.account_subscription.user.email%>">the purchaser of your subscription</a> to have them renew the subscription.</li>
+        <li>You may also 'spin off' this seat into your own subscription, and renew it below. This will add one year on to your existing subscription.</li>
+      </ul>
+
+      <% end %>
 
     </div>
   </div>
@@ -49,7 +61,7 @@
 
 
 
-
+<% if @seat.user != @seat.account_subscription.user %>
 <div class="row" style="margin-top:20px;">
   <div class="col-sm-12">
     <div class="well">
@@ -95,8 +107,9 @@
 
                     <% if @product.can_supply? %>
                         <%= hidden_field_tag :quantity, 1 %>
-                        <%= hidden_field_tag :renewing_subscription_id, @seat.account_subscription.id %>
-                        <%= hidden_field_tag :renewing_seat_id, @seat.id %>
+                        <%= hidden_field_tag "options[renewing_subscription_id]", @seat.account_subscription.id %>
+                        <%= hidden_field_tag "options[renewing_seat_id]", @seat.id %>
+                        <%= hidden_field_tag "options[is_spinoff]", true %>
 
                         <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
                             <%= Spree.t(:add_to_cart) %>
@@ -125,3 +138,4 @@
 </div>
 
 
+<% end %>
