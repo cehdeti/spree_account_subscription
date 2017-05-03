@@ -87,7 +87,8 @@
 
     <% @subscription.subscription_seats.each do |seat| %>
 
-        <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats/#{seat.id}" do |f| %>
+        <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats/#{seat.id}/",:method => 'PATCH' do |f| %>
+          <%= f.hidden_field "redirect", :value => request.path %>
 
           <div class="row">
 
@@ -107,10 +108,10 @@
         <% end %>
     <% end %>
     <% if @subscription.num_seats > @subscription.subscription_seats.length %>
-        <% (1..@subscription.num_seats - @subscription.subscription_seats.length).each do |seat| %>
-          <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats/new" do |f| %>
+        <% (1..@subscription.num_seats - @subscription.subscription_seats.length).each do |i| %>
+          <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats" do |f| %>
+              <%= f.hidden_field "redirect", :value => request.path %>
               <div class="row" style="margin-top:10px;">
-
                 <div class="col-xs-12 col-md-4">
                   <%= f.text_field "email", :placeholder=>'Enter email address'%>
                 </div>
