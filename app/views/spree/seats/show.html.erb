@@ -68,7 +68,6 @@
 
       <%= form_for :order, url: populate_orders_path do |f| %>
           <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-            <div id="product-variants" class="col-md-6">
 
 
               <div style="display: none;">
@@ -78,43 +77,42 @@
                                      'data-in-stock' => @product.renewal_variant.can_supply?,
                                      'checked'=>'checked'
                 %>
+
               </div>
 
+              <%= hidden_field_tag :quantity, 1 %>
+              <%= hidden_field_tag "options[renewing_subscription_id]", @seat.account_subscription.id %>
+              <%= hidden_field_tag "options[renewing_seat_id]", @seat.id %>
+              <%= hidden_field_tag "options[is_spinoff]", true %>
 
-              <% if @product.price_in(current_currency) && !@product.price.nil? %>
-                  <div data-hook="product_price" class="col-md-5">
-                    <div id="product-price">
-                      <h5 class="product-section-title">Renewal Price</h5>
-                      <div>
-                      <span class="lead price selling" itemprop="price">
-                        <%= display_price(@product) %>
-                      </span>
-                        <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
-                      </div>
-                    </div>
 
-                    <% if @product.can_supply? %>
-                        <%= hidden_field_tag :quantity, 1 %>
-                        <%= hidden_field_tag "options[renewing_subscription_id]", @seat.account_subscription.id %>
-                        <%= hidden_field_tag "options[renewing_seat_id]", @seat.id %>
-                        <%= hidden_field_tag "options[is_spinoff]", true %>
+              <div class="col-sm-8">
+                <h6>Renew this subscription seat</h6>
+                <p>By spinning off your subscription seat into your own subscription, your old subscription token will remain active until expiration.  You will also be granted a new token for your 'spun off' seat.</p>
+              </div>
 
-                        <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
-                            <%= Spree.t(:add_to_cart) %>
-                        <% end %>
-                        </div>
-                    <% end %>
-                    </div>
-              <% else %>
+              <div class="col-sm-2">
+
+                <div data-hook="product_price">
                   <div id="product-price">
-                    <br />
+                    <h6 class="product-section-title">Price</h6>
                     <div>
-          <span class="price selling" itemprop="price">
-            <%= Spree.t('product_not_available_in_this_currency') %>
-          </span>
+                      <span class="lead price selling" itemprop="price">
+                        <%= display_price(@product.renewal_variant) %>
+                      </span>
+                      <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
                     </div>
                   </div>
-              <% end %>
+                </div>
+
+
+              </div>
+
+              <div class="col-sm-2">
+
+                <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button',style:'margin-top:30px;float:right;', type: :submit do %>
+                    <%= Spree.t(:add_to_cart) %>
+                <% end %>
 
               </div>
           </div>

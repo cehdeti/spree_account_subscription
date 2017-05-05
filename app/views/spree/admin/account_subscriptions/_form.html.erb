@@ -10,18 +10,6 @@
 
         <br/>
 
-        <%= f.label :is_renewal, "Is Renewal" %><br />
-        <%= f.check_box :is_renewal %>
-
-        <br/>
-
-        <%= f.label :renewing_subscription_id, "Subscription this renews" %><br />
-        <%= f.collection_select :renewing_subscription_id, Spree::AccountSubscription.all, :id, :description, {:include_blank=>true},{:class => 'select2'}  %>
-
-
-
-        <br/>
-
         <%= f.label :start_datetime, "Start Date" %><br />
         <%= f.datetime_select :start_datetime %>
         <br/>

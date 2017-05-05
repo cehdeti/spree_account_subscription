@@ -40,9 +40,9 @@ module Spree
       #if its less or equal than the current number of seats, we use renewal variant for all of them
       if quantity <= subscription.num_seats
 
-        #if it less that current number of seats, create a new subscription
+        #if it less that current number of seats, create a new subscription as spinoff
         if quantity < subscription.num_seats
-          options.delete("renewing_subscription_id")
+          options[:is_spinoff] = true
         end
 
         errors = populate_order(order, renewal_variant, quantity, options, errors)
