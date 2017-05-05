@@ -27,6 +27,49 @@ module Spree
     end
 
 
+    # Adds a new item to the order (creating a new order if none already exists)
+    def processrenewal
+      order    = current_order(create_order_if_necessary: true)
+      new_variant  = Spree::Variant.find(params[:new_id])
+      renewal_variant = Spree::Variant.find(params[:renewal_id])
+      subscription = Spree::AccountSubscription.find(params[:subscription_id])
+      quantity = params[:quantity].to_i
+      options  = params[:options] || {}
+      errors = []
+
+      #if its less or equal than the current number of seats, we use renewal variant for all of them
+      if quantity <= subscription.num_seats
+
+        #if it less that current number of seats, create a new subscription
+        if quantity < subscription.num_seats
+          options.delete("renewing_subscription_id")
+        end
+
+        errors = populate_order(order, renewal_variant, quantity, options, errors)
+
+      #otherwise, we use some of the renewal variant, and some of the new variant
+      else
+
+        errors = populate_order(order, renewal_variant, subscription.num_seats, options, errors)
+
+        difference = quantity - subscription.num_seats
+
+        errors = populate_order(order, new_variant, difference, options, errors)
+
+      end
+
+      if errors.length > 0
+        flash[:error] = errors.join(', ')
+        redirect_back_or_default(spree.root_path)
+      else
+        respond_with(order) do |format|
+          format.html { redirect_to cart_path }
+        end
+      end
+
+
+    end
+
     private
 
     def find_account_subscriptions
@@ -40,22 +83,24 @@ module Spree
     def check_auth
 
       redirect_to '/', notice: 'Login Required' unless spree_current_user
-#      sub = nil
-#      if params[:id].present?
-#        sub = Spree::AccountSubscription.find(params[:id])
-#      end
-
-#      if sub
-#        authorize! :show,:edit, sub
-#      else
-#        authorize! :index
-#      end
+    end
 
 
-      def renewal_price( variant , seats)
-        Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
+    def renewal_price( variant , seats)
+      Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
+    end
+
+
+    def populate_order( order, variant, quantity, options, errors )
+
+      begin
+        order.contents.add(variant, quantity, options)
+      rescue ActiveRecord::RecordInvalid => e
+        errors.push(  e.record.errors.full_messages.join(", "))
       end
 
+      errors
     end
+
   end
 end

@@ -5,23 +5,7 @@
     <%= f.check_box :subscribable %>
   <% end %>
 
-  <div data-hook="is_renewal">
-    <%= f.field_container :is_renewal, :class => ['form-group'] do %>
-        <%= f.label 'is this a renewal?' %><br/>
-        <%= f.check_box :is_renewal %>
-        <%= f.error_message_on :is_renewal %>
-    <% end %>
-  </div>
-
-  <div data-hook="existing_subscription_id">
-    <%= f.field_container :existing_subscription_id, :class => ['form-group'] do %>
-        <%= f.label 'if renewal, which subscription does it renew?' %><br/>
-        <%= f.collection_select :existing_subscription_id, Spree::Product.where(:subscribable=>true), :id, :name, { include_blank: Spree.t('match_choices.none') },{:class => 'select2'}  %>
-        <%= f.error_message_on :existing_subscription_id %>
-    <% end %>
-  </div>
 
 </div>
 
 
-<%= render partial: 'spree/admin/variants/subscription_fields', locals: { f: f } %>

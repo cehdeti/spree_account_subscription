@@ -12,11 +12,21 @@ module Spree
     def renewal_variant
       renewal=nil
       self.variants.each do |variant |
-        if variant.options_text.include? 'Renewal'
+        if variant.renewal
           renewal = variant
         end
       end
       renewal
+    end
+
+    def new_variant
+      newv=nil
+      self.variants.each do |variant |
+        if !variant.renewal
+          newv = variant
+        end
+      end
+      newv
     end
   end
 end
