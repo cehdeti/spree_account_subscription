@@ -1,3 +1,13 @@
+<nav id="breadcrumbs" class="col-md-12 no-padding">
+  <ol class="breadcrumb" itemscope="itemscope" itemtype="https://schema.org/BreadcrumbList">
+    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/"><span itemprop="name">Home</span></a>&nbsp;</span></li>
+    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/subscriptions"><span itemprop="name">Subscriptions</span></a>&nbsp;</span></li>
+    <li class="active" itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/subscriptions/<%=@seat.account_subscription.id%>/seats/<%= @seat.id %>"><span itemprop="name">Manage Seat</span></a>&nbsp;</span></li>
+
+  </ol>
+</nav>
+
+
 <h2>Subscription Seat</h2>
 
 
@@ -38,11 +48,11 @@
   </div>
   <div class="col-xs-12 col-md-2">
     <h5>User</h5>
-    <a href="mailto:<%=@seat.user.email%>"><%= @seat.user.email %></a>
+    <a href="mailto:<%=@seat.user.email%>" style="word-break: break-all;"><%= @seat.user.email %></a>
   </div>
   <div class="col-xs-12 col-md-2">
     <h5>Purchaser</h5>
-    <a href="mailto:<%=@seat.account_subscription.user.email%>"><%= @seat.account_subscription.user.email %></a>
+    <a href="mailto:<%=@seat.account_subscription.user.email%>" style="word-break: break-all;"><%= @seat.account_subscription.user.email %></a>
   </div>
   <div class="col-xs-12 col-md-2">
     <h5>Token</h5>

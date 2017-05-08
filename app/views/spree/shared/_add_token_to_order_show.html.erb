@@ -1,4 +1,4 @@
-<% if @order.state == 'complete' and item.variant.subscribable? %>
+<% if @order.state == 'complete'  %>
     <div data-hook='subscription-token'>
       <% if subscription_for_order @order %>
         <hr/>

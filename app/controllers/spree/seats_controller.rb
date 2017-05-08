@@ -4,7 +4,8 @@ module Spree
   class SeatsController < Spree::BaseController
 
     require "time"
-    before_filter :get_seat, :check_auth
+    before_action :check_authorization
+    before_filter :get_seat
 
     helper 'spree/products'
     include Spree::Core::ControllerHelpers::Order
@@ -59,7 +60,7 @@ module Spree
             flash[:notice] = "Seat with email #{email} has been assigned!"
           end
         else
-          flash[:notice] = "user with email #{email} not found"
+          flash[:error] = "user with email `#{email}` not found"
         end
 
 
@@ -71,8 +72,10 @@ module Spree
 
     private
 
-    def check_auth
-      authorize! :show,:edit, Spree::SubscriptionSeat
+    def check_authorization
+      unless spree_current_user
+        authorize!(:show, nil, {:message=>'please login'})
+      end
     end
 
 

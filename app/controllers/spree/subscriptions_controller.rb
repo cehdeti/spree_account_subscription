@@ -1,8 +1,9 @@
 module Spree
-  class SubscriptionsController < Spree::BaseController
+  class SubscriptionsController < Spree::StoreController
 
     require "time"
-    before_filter :check_auth, :find_account_subscriptions, :find_subscription_seats
+    before_filter :find_account_subscriptions, :find_subscription_seats
+    before_action :check_authorization
 
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
 
@@ -77,12 +78,15 @@ module Spree
     end
 
     def find_subscription_seats
+      puts("spree current user: #{spree_current_user}")
+
       @seats = Spree::SubscriptionSeat.where(:user => spree_current_user)
     end
 
-    def check_auth
-
-      redirect_to '/', notice: 'Login Required' unless spree_current_user
+    def check_authorization
+      unless spree_current_user
+        authorize!(:index, nil, {:message=>'please login'})
+      end
     end
 
 
