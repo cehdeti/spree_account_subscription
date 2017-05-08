@@ -34,7 +34,7 @@ module Spree
 
           end
 
-          if params[:show_details] && params[:show_details].to_i > 0
+          if @account_subcription && params[:show_details] && params[:show_details].to_i > 0
             render 'show_details'
           else
             render nothing: true, :status => status
