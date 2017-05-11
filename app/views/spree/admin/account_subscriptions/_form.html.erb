@@ -23,7 +23,13 @@
         <%= f.label :token, "Token" %><br />
         <%= f.text_field :token %>
 
-
+        <hr/>
+        <br/>
+        <%= f.label :is_renewal, "Is renewal: #{@account_subscription.is_renewal}"%>
+        <br/>
+        <%= f.label :renewal_date, "Renewal Date: #{@account_subscription.renewal_date}"%>
+        <br/>
+        <hr/>
         <%= f.error_message_on :product %>
     <% end %>
   </div>

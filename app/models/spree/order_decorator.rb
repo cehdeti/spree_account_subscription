@@ -15,7 +15,7 @@ module Spree
 
           #if there is an existing subscription (were doing a renewal of some sort)
           if line_item.renewing_subscription_id?
-
+            puts("HHHHH CREATING SUBSCRIPTION RENEWAL")
             subscription = Spree::AccountSubscription.find(line_item.renewing_subscription_id)
 
 
@@ -36,7 +36,9 @@ module Spree
                   start_datetime: subscription.start_datetime,
                   end_datetime: enddate,
                   order: self,
-                  num_seats: line_item.quantity
+                  num_seats: line_item.quantity,
+                  is_renewal:true,
+                  renewal_date: Date.today
               )
 
               #otherwise when renewing, we are updating the existing subscription object
@@ -54,13 +56,15 @@ module Spree
                 subscription.num_seats += line_item.quantity
 
               end
-
+              subscription.is_renewal=true
+              subscription.renewal_date= Date.today
               subscription.save
 
             end
 
             #if no existing subscription. create a new one altogether!
           else
+            puts("HHHHH CREATING NEEEEEW SUBSCRIPTION (NOT RENEWAL)")
 
             end_datetime = DateTime.now + 365.days
 
@@ -71,7 +75,9 @@ module Spree
                 start_datetime: DateTime.now,
                 end_datetime: end_datetime,
                 order: self,
-                num_seats: line_item.quantity
+                num_seats: line_item.quantity,
+                is_renewal: false,
+                renewal_date: nil
             )
             line_item.quantity=1
 
