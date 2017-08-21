@@ -57,7 +57,8 @@ module Spree
           def get_by_user_id
             @account_subcription = Spree::AccountSubscription.
                 order(:end_datetime).
-                find_by(user_id: params[:user_id])
+                where(:user_id => params[:user_id]).
+                where("end_datetime > ?", DateTime.now).first
           end
 
           def get_by_token
