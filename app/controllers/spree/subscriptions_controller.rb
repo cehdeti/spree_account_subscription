@@ -20,7 +20,7 @@ module Spree
       @subscription = Spree::AccountSubscription.includes(:subscription_seats).find(params[:id])
       @product = @subscription.product
 
-      if @subscription.user != spree_current_user
+      if @subscription.user != spree_current_user and not spree_current_user.admin?
         @message = 'You do not have permissions to view this item'
         render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
       end
