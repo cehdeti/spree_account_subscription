@@ -35,6 +35,8 @@
 </div>
 
 <hr/>
+<% if @product.can_renew %>
+
 <div class="row">
   <div class="col-sm-12">
     <div class="well">
@@ -90,6 +92,7 @@
 </div>
 
 <hr/>
+<% end %>
 
 <div class="row">
 
@@ -119,7 +122,7 @@
                 <div class="row">
 
                   <div class="col-xs-12 col-md-4">
-                    <%= f.text_field "email", :value => seat.user.email%>
+                    <%= f.text_field "email", :value => seat.user.nil? ? '' : seat.user.email%>
                   </div>
                   <div class="col-xs-12 col-md-4">
                     <%= f.check_box "revoke", :value => false%>
@@ -168,7 +171,13 @@
 <script type="text/javascript">
 
   $(document).ready(function(){
+    <% if @product.can_renew %>
     var renewalPrice = <%= @product.renewal_variant.price_in(current_currency).amount%>;
+
+    <% else %>
+    var renewalPrice = 0;
+    <% end %>
+
     var newPrice = <%= @product.new_variant.price_in(current_currency).amount %>;
     var currentSeats = <%= @subscription.num_seats %>;
 
