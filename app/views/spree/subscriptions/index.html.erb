@@ -65,10 +65,13 @@
 
   <% @seats.each do | seat | %>
     <div class="row">
+      <% if seat.account_subscription %>
       <div class="col-xs-12 col-md-3">Seat for <%= seat.account_subscription.product.name %></div>
       <div class="col-xs-12 col-md-3"><%= seat.account_subscription.state %></div>
       <div class="col-xs-12 col-md-3"><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
       <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=seat.account_subscription.id%>/seats/<%=seat.id%>/">View</a></div>
+      <% end %>
+
     </div>
   <% end %>
 
