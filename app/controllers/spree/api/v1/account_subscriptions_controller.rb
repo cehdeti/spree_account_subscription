@@ -1,11 +1,20 @@
 module Spree
   module Api
     module V1
+
+
       class AccountSubscriptionsController < Spree::Api::BaseController
 
         require "time"
         before_action :find_account_subscription
 
+
+        @all_subs = nil
+
+        def initialize
+          @all_subs = []
+          puts("INITIALILEZEDDDD #{@all_subs}")
+        end
 
         def show
           authorize! :show, @account_subcription
@@ -48,29 +57,59 @@ module Spree
 
           def find_account_subscription(lock = false)
             #check if user is subscription owner
-            unless get_by_user_id
-              #otherwise look for a subscription seat
-              get_by_token
+            get_by_user_id
+
+              #also look for a subscription seat
+            get_by_token
+            
+            if @all_subs.length == 0
+
+
+            elsif @all_subs.length == 1
+
+              @account_subcription = @all_subs.first
+
+            else
+
+              sub = @all_subs.first
+
+              @all_subs.each do |check_sub|
+                if check_sub.end_datetime > sub.end_datetime
+                  sub = check_sub
+                end
+              end
+
+              @account_subcription = sub
+
             end
+
           end
 
           def get_by_user_id
-            @account_subcription = Spree::AccountSubscription.
+
+            sub=  Spree::AccountSubscription.
                 order(:end_datetime).
                 where(:user_id => params[:user_id]).
                 where("end_datetime > ?", DateTime.now).first
+
+            if sub != nil
+              @all_subs.append sub
+            end
+
           end
 
           def get_by_token
             subscription = Spree::AccountSubscription
                                        .find_by(token: params[:registration_code])
 
+            seat = nil
+
             if subscription
               seat = get_subscription_seat subscription
             end
 
             if seat
-              @account_subcription = subscription
+              @all_subs.append subscription
             end
 
           end
