@@ -67,6 +67,7 @@ module Spree
             puts("HHHHH CREATING NEEEEEW SUBSCRIPTION (NOT RENEWAL)")
 
             end_datetime = DateTime.now + 365.days
+            end_datetime += 365.days if should_extend_subscription?
 
             Spree::AccountSubscription.subscribe!(
                 email: self.email,

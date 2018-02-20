@@ -52,6 +52,11 @@ en:
     unship: "Unship"
     you_have_no_subscriptions_yet: "You have no subscriptions yet"
 
+    promotion_action_types:
+      extend_subscription:
+        name: Extend Subscription
+        description: Extends a subscription by an additional year
+
     activerecord:
       attributes:
         spree/address:
