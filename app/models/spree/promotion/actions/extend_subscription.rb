@@ -4,7 +4,12 @@ module Spree
       class ExtendSubscription < Spree::PromotionAction
         def perform(options = {})
           order = options[:order]
-          order.toggle!(:should_extend_subscription) unless order.should_extend_subscription?
+
+          return false if order.should_extend_subscription? || order.line_items.none? do |line_item|
+            promotion.line_item_actionable?(order, line_item)
+          end
+
+          order.toggle!(:should_extend_subscription)
         end
 
         def revert(options = {})
