@@ -1,11 +1,12 @@
 <% if @order.state == 'complete'  %>
+  <% subscription = @order.account_subscriptions.find_by(product: item.product) %>
+  <% if subscription %>
     <div data-hook='subscription-token'>
-      <% if subscription_for_order @order %>
-        <hr/>
-        <p>This subscription has <em><%= pluralize(item.quantity, 'seat') %></em></p>
-        <p>It will expire on <strong><%= subscription.end_datetime%></strong></p>
-        <p>In order to activate any other seats in this subscription, please share this token.</p>
-        <pre><%=subscription.token%></pre>
-      <% end %>
+      <hr/>
+      <p>This subscription has <em><%= pluralize(item.quantity, 'seat') %></em></p>
+      <p>It will expire on <strong><%= subscription.end_datetime%></strong></p>
+      <p>In order to activate any other seats in this subscription, please share this token.</p>
+      <pre><%=subscription.token%></pre>
     </div>
+  <% end %>
 <% end %>

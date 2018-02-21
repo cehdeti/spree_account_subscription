@@ -1,6 +1,8 @@
 module Spree
   Order.class_eval do
 
+    has_many :account_subscriptions, class_name: 'Spree::AccountSubscription', inverse_of: :order
+
     def create_subscriptions
 
       if !self.user
