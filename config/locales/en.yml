@@ -55,7 +55,14 @@ en:
     promotion_action_types:
       extend_subscription:
         name: Extend Subscription
-        description: Extends a subscription by an additional year
+        description: Extends a subscription by an additional time period
+        extension_policy: Extension policy
+        extension_policy_period: Time period
+        extension_policy_date: Specific date
+        period_quantity: Quantity
+        period_unit_years: Year(s)
+        period_unit_months: Month(s)
+        period_unit_days: Day(s)
 
     activerecord:
       attributes:

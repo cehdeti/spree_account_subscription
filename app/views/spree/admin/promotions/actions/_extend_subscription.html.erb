@@ -1,0 +1,22 @@
+<div class="panel-body calculator-fields">
+  <div class="form-group">
+    <%= label_tag "#{param_prefix}_extension_method", Spree.t('promotion_action_types.extend_subscription.extension_policy') %>
+    <%= select_tag("#{param_prefix}[preferred_extension_policy]", options_for_select(Spree::Promotion::Actions::ExtendSubscription::EXTENSION_POLICIES.map { |s| [Spree.t("promotion_action_types.extend_subscription.extension_policy_#{s}"), s] }, promotion_action.preferred_extension_policy), class: 'form-control js-promo-action-extend-subscription-extension-policy') %>
+  </div>
+
+  <div class="form-group">
+    <div class="row js-promo-action-extend-subscription-period">
+      <div class="col-md-6">
+        <%= number_field_tag("#{param_prefix}[preferred_period_quantity]", promotion_action.preferred_period_quantity, class: 'form-control', placeholder: Spree.t('promotion_action_types.extend_subscription.period_quantity')) %>
+      </div>
+      <div class="col-md-6">
+        <%= select_tag("#{param_prefix}[preferred_period_unit]", options_for_select(Spree::Promotion::Actions::ExtendSubscription::PERIOD_UNITS.map { |s| [Spree.t("promotion_action_types.extend_subscription.period_unit_#{s}"), s] }, promotion_action.preferred_period_unit), class: 'form-control') %>
+      </div>
+    </div>
+    <div class="row js-promo-action-extend-subscription-date">
+      <div class="col-md-12">
+        <%= text_field_tag "#{param_prefix}[preferred_end_date]", promotion_action.preferred_end_date, class: 'datepicker form-control' %>
+      </div>
+    </div>
+  </div>
+</div>
