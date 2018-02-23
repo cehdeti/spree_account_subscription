@@ -26,7 +26,7 @@ class Spree::AccountSubscription < ActiveRecord::Base
     existing_subscription = self.where(email: opts[:email], user_id: opts[:user].id, product_id: opts[:product].id, order: opts[:order].id, num_seats: opts[:num_seats]).first
 
     if existing_subscription
-      self.renew_subscription(existing_subscription, opts[:end_datemime])
+      self.renew_subscription(existing_subscription, opts[:end_datetime])
     else
       self.new_subscription(opts[:email], opts[:user], opts[:product], opts[:start_datetime], opts[:end_datetime], opts[:order], opts[:num_seats], opts[:is_renewal], opts[:renewal_date])
     end
