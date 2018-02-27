@@ -13,7 +13,7 @@ module Spree
         if line_item.renewing_subscription_id?
           subscription = Spree::AccountSubscription.find(line_item.renewing_subscription_id)
 
-          enddate = if subscription.end_date < DateTime.now
+          enddate = if subscription.end_datetime < DateTime.now
                       DateTime.now
                     else
                       subscription.end_datetime
