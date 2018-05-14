@@ -12,3 +12,5 @@ node(:seats_taken) {@account_subcription.seats_taken }
 node(:order_number) {@account_subcription.order_number }
 node(:is_renewal) { @account_subcription.is_renewal }
 node(:renewal_date) { @account_subcription.renewal_date }
+node(:product) { @account_subscription.product.id }
+node(:sku) { |a| @account_subscription.product.sku }

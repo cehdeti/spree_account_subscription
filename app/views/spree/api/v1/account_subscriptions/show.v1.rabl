@@ -1,6 +1,7 @@
 object @account_subscription
 
 node(:product) { |a| a.product.id }
+node(:sku) { |a| a.product.sku }
 node(:user) { |a| a.user.id }
 node(:email) { |a| a.email }
 node(:state) { |a| a.state }
