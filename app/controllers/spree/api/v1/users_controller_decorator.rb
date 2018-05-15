@@ -1,8 +1,7 @@
 Spree::Api::V1::UsersController.class_eval do
-  before_filter :include_user_subscriptions, only: [:show, :account_subscriptions]
+  before_action :include_user_subscriptions, only: [:show, :account_subscriptions]
 
   def account_subscriptions
-    puts "SUBSCRIPTIONS!!!! #{@account_subscriptions} #{@account_subscriptions.length}"
     respond_with(@account_subscriptions)
   end
 

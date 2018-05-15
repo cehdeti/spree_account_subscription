@@ -1,129 +1,90 @@
+require 'time'
+
 module Spree
   module Api
     module V1
-
-
       class AccountSubscriptionsController < Spree::Api::BaseController
+        LAPSED_SUBSCRIPTION_STATUS_CODE = 211
+        NO_SUBSCRIPTION_STATUS_CODE = 212
+        SUBSCRIPTION_OK_STATUS_CODE = 200
 
-        require "time"
         before_action :find_account_subscription
-
 
         @all_subs = nil
 
         def initialize
           @all_subs = []
-          puts("INITIALILEZEDDDD #{@all_subs}")
         end
 
         def show
-          authorize! :show, @account_subcription
+          authorize! :show, @account_subscription
 
-          #status in the case that subscription has lapsed
-          status=211
-
-          if !@account_subcription
-            #no subscription, no content to send
-            status=212
-
+          if !@account_subscription
+            status = NO_SUBSCRIPTION_STATUS_CODE
           else
-
-            dif = @account_subcription.end_datetime - DateTime.now
-            expires_in dif, :public => true
-
-            response.headers["Expires"] = @account_subcription.end_datetime.httpdate
-
-            if DateTime.now < @account_subcription.end_datetime
-
-              #subscription is ok
-              status=200
-
-            end
-
-
+            dif = @account_subscription.end_datetime - DateTime.now
+            expires_in dif, public: true
+            response.headers['Expires'] = @account_subscription.end_datetime.httpdate
+            status = if DateTime.now < @account_subscription.end_datetime
+                       SUBSCRIPTION_OK_STATUS_CODE
+                     else
+                       LAPSED_SUBSCRIPTION_STATUS_CODE
+                     end
           end
 
-          if @account_subcription && params[:show_details] && params[:show_details].to_i > 0
+          if @account_subscription && params[:show_details] && params[:show_details].to_i > 0
             render 'show_details'
           else
-            render nothing: true, :status => status
+            render nothing: true, status: status
           end
-
         end
-
 
         private
 
+        def find_account_subscription
+          get_by_user_id # Check if user is subscription owner
+          get_by_token # also look for a subscription seat
 
-          def find_account_subscription(lock = false)
-            #check if user is subscription owner
-            get_by_user_id
+          if @all_subs.length == 1
+            @account_subscription = @all_subs.first
+          elsif @all_subs.present?
+            sub = @all_subs.first
 
-              #also look for a subscription seat
-            get_by_token
-            
-            if @all_subs.length == 0
-
-
-            elsif @all_subs.length == 1
-
-              @account_subcription = @all_subs.first
-
-            else
-
-              sub = @all_subs.first
-
-              @all_subs.each do |check_sub|
-                if check_sub.end_datetime > sub.end_datetime
-                  sub = check_sub
-                end
-              end
-
-              @account_subcription = sub
-
+            @all_subs.each do |check_sub|
+              sub = check_sub if check_sub.end_datetime > sub.end_datetime
             end
 
+            @account_subscription = sub
           end
+        end
 
-          def get_by_user_id
+        def get_by_user_id
+          sub = Spree::AccountSubscription
+                .order(:end_datetime)
+                .where(user_id: params[:user_id])
+                .where('end_datetime > ?', DateTime.now)
+                .first
 
-            sub=  Spree::AccountSubscription.
-                order(:end_datetime).
-                where(:user_id => params[:user_id]).
-                where("end_datetime > ?", DateTime.now).first
+          return if sub.nil?
+          @all_subs.append(sub)
+        end
 
-            if sub != nil
-              @all_subs.append sub
-            end
+        def get_by_token
+          subscription = Spree::AccountSubscription.find_by(token: params[:registration_code])
+          return unless subscription
 
-          end
+          seat = get_subscription_seat(subscription)
+          return unless seat
 
-          def get_by_token
-            subscription = Spree::AccountSubscription
-                                       .find_by(token: params[:registration_code])
+          @all_subs.append(subscription)
+        end
 
-            seat = nil
-
-            if subscription
-              seat = get_subscription_seat subscription
-            end
-
-            if seat
-              @all_subs.append subscription
-            end
-
-          end
-
-          def get_subscription_seat( subscription )
-            user_id = params[:user_id]
-            seat = subscription.get_seat user_id
-            unless seat
-              seat = subscription.take_seat user_id
-            end
-
-            seat
-          end
-
+        def get_subscription_seat(subscription)
+          user_id = params[:user_id]
+          seat = subscription.get_seat(user_id)
+          seat = subscription.take_seat(user_id) unless seat
+          seat
+        end
       end
     end
   end
