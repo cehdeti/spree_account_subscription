@@ -10,6 +10,7 @@ class Spree::AccountSubscription < ActiveRecord::Base
   has_many :subscription_seats, foreign_key: "account_subscription_id"
 
   scope :canceled, -> { where(state: :canceled) }
+  scope :expiring_on, ->(date) { where('date(end_datetime) = ?', date.to_date) }
 
   has_secure_token
 
@@ -41,15 +42,7 @@ class Spree::AccountSubscription < ActiveRecord::Base
   end
 
   def ended?
-    if end_datetime?
-      DateTime.now > end_datetime
-    end
-  end
-
-  def ending?
-    if end_datetime?
-      DateTime.now - 30.days > end_datetime
-    end
+    end_datetime? && DateTime.now > end_datetime
   end
 
   def canceled?
