@@ -56,22 +56,6 @@ class Spree::AccountSubscription < ActiveRecord::Base
     state.intern == :canceled
   end
 
-  def notify_ended!
-    if Spree::Subscriptions::Config.use_delayed_job
-      Spree::SubscriptionMailer.delay.subscription_ended_email(self)
-    else
-      Spree::SubscriptionMailer.subscription_ended_email(self).deliver
-    end
-  end
-
-  def notify_ending!
-    if Spree::Subscriptions::Config.use_delayed_job
-      Spree::SubscriptionMailer.delay.subscription_ending_email(self)
-    else
-      Spree::SubscriptionMailer.subscription_ending_email(self).deliver
-    end
-  end
-
   def allow_cancel?
     self.state != 'canceled'
   end
