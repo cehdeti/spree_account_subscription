@@ -19,7 +19,7 @@ Spree::Core::Engine.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
-      resources :account_subscriptions, only: :show, param: :user_id
+      get 'account_subscriptions(/:user_id)', to: 'account_subscriptions#show', as: 'account_subscription'
       resources :users do
         member do
           get :account_subscriptions
