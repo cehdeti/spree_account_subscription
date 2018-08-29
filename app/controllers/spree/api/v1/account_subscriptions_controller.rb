@@ -10,12 +10,6 @@ module Spree
 
         before_action :find_account_subscription
 
-        @all_subs = nil
-
-        def initialize
-          @all_subs = []
-        end
-
         def show
           authorize! :show, @account_subscription
 
@@ -42,6 +36,8 @@ module Spree
         private
 
         def find_account_subscription
+          @all_subs = []
+
           get_by_user_id # Check if user is subscription owner
           get_by_token # also look for a subscription seat
 
@@ -59,22 +55,22 @@ module Spree
         end
 
         def get_by_user_id
+          return unless params[:user_id]
+
           sub = Spree::AccountSubscription
                 .order(:end_datetime)
                 .where(user_id: params[:user_id])
                 .where('end_datetime > ?', DateTime.now)
                 .first
 
-          return if sub.nil?
-          @all_subs.append(sub)
+          @all_subs.append(sub) unless sub.nil?
         end
 
         def get_by_token
           subscription = Spree::AccountSubscription.find_by(token: params[:registration_code])
           return unless subscription
 
-          seat = get_subscription_seat(subscription)
-          return unless seat
+          get_subscription_seat(subscription) || return if params[:user_id]
 
           @all_subs.append(subscription)
         end
