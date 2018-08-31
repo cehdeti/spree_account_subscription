@@ -57,7 +57,7 @@ module Spree
         def get_by_user_id
           return unless params[:user_id]
 
-          sub = Spree::AccountSubscription
+          sub = scoped_subscriptions
                 .order(:end_datetime)
                 .where(user_id: params[:user_id])
                 .where('end_datetime > ?', DateTime.now)
@@ -67,7 +67,7 @@ module Spree
         end
 
         def get_by_token
-          subscription = Spree::AccountSubscription.find_by(token: params[:registration_code])
+          subscription = scoped_subscriptions.find_by(token: params[:registration_code])
           return unless subscription
 
           get_subscription_seat(subscription) || return if params[:user_id]
@@ -80,6 +80,10 @@ module Spree
           seat = subscription.get_seat(user_id)
           seat = subscription.take_seat(user_id) unless seat
           seat
+        end
+
+        def scoped_subscriptions
+          Spree::AccountSubscription.all
         end
       end
     end
