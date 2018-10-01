@@ -2,7 +2,7 @@ require 'has_secure_token'
 
 class Spree::AccountSubscription < ActiveRecord::Base
   belongs_to :product, class_name: 'Spree::Product'
-  belongs_to :user, class_name: Spree.user_class
+  belongs_to :user, class_name: Spree.user_class.to_s
   belongs_to :order, class_name: 'Spree::Order', inverse_of: :account_subscriptions
   has_many :subscription_seats, foreign_key: 'account_subscription_id'
 
