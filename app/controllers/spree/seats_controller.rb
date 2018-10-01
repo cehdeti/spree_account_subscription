@@ -5,7 +5,7 @@ module Spree
 
     require "time"
     before_action :check_authorization
-    before_filter :get_seat
+    before_action :get_seat
 
     helper 'spree/products'
     include Spree::Core::ControllerHelpers::Order
