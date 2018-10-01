@@ -2,7 +2,7 @@ module Spree
   class SubscriptionsController < Spree::StoreController
 
     require "time"
-    before_filter :find_account_subscriptions, :find_subscription_seats
+    before_action :find_account_subscriptions, :find_subscription_seats
     before_action :check_authorization
 
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
