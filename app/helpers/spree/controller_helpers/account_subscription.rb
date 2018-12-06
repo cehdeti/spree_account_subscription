@@ -12,6 +12,7 @@ module Spree
       def subscription_for_order(order)
         @subscription = Spree::AccountSubscription.find_by(order_id: order.id)
       end
+
     end
   end
 end

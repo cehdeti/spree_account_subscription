@@ -4,20 +4,18 @@ module Spree
     has_many :account_subscriptions, class_name: 'Spree::AccountSubscription', inverse_of: :order
 
     def create_subscriptions
-
       self.user = Spree::User.find_by(email: email) unless user
 
-      line_items.select { |i| i.variant.subscribable? }.each do |line_item|
-        # If there is an existing subscription (were doing a renewal of some
-        # sort)
+      line_items.select(&:subscribable?).each do |line_item|
+        # If there is an existing subscription (were doing a renewal of some sort)
         if line_item.renewing_subscription_id?
           subscription = Spree::AccountSubscription.find(line_item.renewing_subscription_id)
 
           enddate = if subscription.end_datetime < DateTime.now
-                      DateTime.now
-                    else
-                      subscription.end_datetime
-                    end + 365.days
+            DateTime.now
+          else
+            subscription.end_datetime
+          end + 365.days
 
           # This case is for renewing a single seat as spinoff, or renewing a
           # subscription with less seats than it currently has.
@@ -41,19 +39,15 @@ module Spree
 
             # If it is a renewal, extend the enddate
             if line_item.variant.renewal
-
               subscription.end_datetime = enddate
 
             # Otherwise we are adding seats to this subscription
             else
-
               subscription.num_seats += line_item.quantity
-
             end
             subscription.is_renewal = true
             subscription.renewal_date = Date.today
             subscription.save
-
           end
 
         # If no existing subscription. create a new one altogether!
@@ -76,7 +70,7 @@ module Spree
       toggle!(:should_extend_subscription) if should_extend_subscription?
     end
 
-    private
+  private
 
     # Given a line item, calculate a new subscription end date, taking into
     # account any coupon codes that are applied to the order that may extend
@@ -109,5 +103,6 @@ module Spree
 
       possible_enddates.max
     end
+
   end
 end

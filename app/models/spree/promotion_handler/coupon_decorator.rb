@@ -37,6 +37,7 @@ module Spree
           set_error_code :coupon_code_not_found
         end
       end
+
     end
   end
 end
