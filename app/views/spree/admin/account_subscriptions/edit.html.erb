@@ -8,7 +8,6 @@
 
 <div>
   <p>Total seats: <%= @account_subscription.num_seats %></p>
-  <p>Seats used: <%= @account_subscription.seats_taken %></p>
 
 </div>
 
@@ -17,7 +16,7 @@
     <%= form_for [:admin, @account_subscription] do |f| %>
       <%= render partial: 'form', locals: { f: f, token: @account_subscription.token } %>
       <p class="form-buttons">
-        <%= button Spree.t("update") %> 
+        <%= button Spree.t("update") %>
       </p>
     <% end %>
   </div>

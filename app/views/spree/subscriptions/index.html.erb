@@ -49,33 +49,3 @@
 <% else %>
   <p>You do not currently have any subscriptions to manage</p>
 <% end %>
-
-
-<h2>My Current Subscription Seats</h2>
-
-<% if @seats.length > 0 %>
-
-  <div class="row">
-
-    <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Details</h5></div>
-  </div>
-
-  <% @seats.each do | seat | %>
-    <div class="row">
-      <% if seat.account_subscription %>
-      <div class="col-xs-12 col-md-3">Seat for <%= seat.account_subscription.product.name %></div>
-      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.state %></div>
-      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
-      <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=seat.account_subscription.id%>/seats/<%=seat.id%>/">View</a></div>
-      <% end %>
-
-    </div>
-  <% end %>
-
-<% else %>
-  <p>You do not currenty have any subscription seats</p>
-
-<% end %>

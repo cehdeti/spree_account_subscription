@@ -1,8 +1,9 @@
+require "time"
+
 module Spree
   class SubscriptionsController < Spree::StoreController
 
-    require "time"
-    before_action :find_account_subscriptions, :find_subscription_seats
+    before_action :find_account_subscriptions
     before_action :check_authorization
 
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
@@ -17,16 +18,14 @@ module Spree
     end
 
     def show
-      @subscription = Spree::AccountSubscription.includes(:subscription_seats).find(params[:id])
+      @subscription = Spree::AccountSubscription.find(params[:id])
       @product = @subscription.product
 
       if @subscription.user != spree_current_user and not spree_current_user.admin?
         @message = 'You do not have permissions to view this item'
         render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
       end
-
     end
-
 
     # Adds a new item to the order (creating a new order if none already exists)
     def processrenewal
@@ -67,20 +66,12 @@ module Spree
           format.html { redirect_to cart_path }
         end
       end
-
-
     end
 
-    private
+  private
 
     def find_account_subscriptions
       @all_subscriptions = Spree::AccountSubscription.where(:user => spree_current_user)
-    end
-
-    def find_subscription_seats
-      puts("spree current user: #{spree_current_user}")
-
-      @seats = Spree::SubscriptionSeat.where(:user => spree_current_user)
     end
 
     def check_authorization
@@ -89,20 +80,16 @@ module Spree
       end
     end
 
-
-    def renewal_price( variant , seats)
+    def renewal_price(variant , seats)
       Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
     end
 
-
-    def populate_order( order, variant, quantity, options, errors )
-
+    def populate_order(order, variant, quantity, options, errors)
       begin
         order.contents.add(variant, quantity, options)
       rescue ActiveRecord::RecordInvalid => e
         errors.push(  e.record.errors.full_messages.join(", "))
       end
-
       errors
     end
 
