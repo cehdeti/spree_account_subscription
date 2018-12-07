@@ -47,33 +47,3 @@
 <% else %>
   <p>You do not currently have any subscriptions to manage</p>
 <% end %>
-
-
-<h2>Subscription Seats</h2>
-
-<% if @seats.length > 0 %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Status</th>
-        <th>Expires</th>
-        <th>Details</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @seats.each do | seat | %>
-        <tr>
-          <% if seat.account_subscription %>
-            <td>Seat for <%= seat.account_subscription.product.name %></td>
-            <td><%= seat.account_subscription.state %></td>
-            <td><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y") %></td>
-            <td><%= link_to 'View', subscription_seat_path(seat.account_subscription, seat), class: 'btn btn-primary btn-sm' %></td>
-          <% end %>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <p>You do not currenty have any subscription seats</p>
-<% end %>

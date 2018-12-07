@@ -35,7 +35,7 @@ module Spree
           @all_subs = []
 
           get_by_user_id # Check if user is subscription owner
-          get_by_token # also look for a subscription seat
+          get_by_token
 
           if @all_subs.length == 1
             @account_subscription = @all_subs.first
@@ -54,10 +54,10 @@ module Spree
           return unless params[:user_id]
 
           sub = scoped_subscriptions
-                .order(:end_datetime)
-                .where(user_id: params[:user_id])
-                .where('end_datetime > ?', DateTime.now)
-                .first
+            .order(:end_datetime)
+            .where(user_id: params[:user_id])
+            .where('end_datetime > ?', DateTime.now)
+            .first
 
           @all_subs.append(sub) unless sub.nil?
         end
@@ -66,17 +66,7 @@ module Spree
           return unless params[:registration_code]
           subscription = scoped_subscriptions.find_by(token: params[:registration_code])
           return unless subscription
-
-          get_subscription_seat(subscription) || return if params[:user_id]
-
           @all_subs.append(subscription)
-        end
-
-        def get_subscription_seat(subscription)
-          user_id = params[:user_id]
-          seat = subscription.get_seat(user_id)
-          seat = subscription.take_seat(user_id) unless seat
-          seat
         end
 
         def scoped_subscriptions

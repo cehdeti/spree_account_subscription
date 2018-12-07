@@ -1,17 +1,17 @@
 module Spree
   LineItem.class_eval do
-    has_one :spree_account_subscription, foreign_key: 'renewing_subscription_id'
-    has_one :spree_subscription_seat, foreign_key: 'renewing_seat_id'
+
+    has_one :account_subscription, foreign_key: 'renewing_subscription_id'
 
     validate :renewal_check
 
-    def subscribable_product?
-      product.subscribable?
-    end
+    delegate :subscribable?, to: :product
+
+  private
 
     def renewal_check
       # check for single seat spinoff renewals
-      if renewing_seat_id && is_spinoff && quantity > 1
+      if is_spinoff && quantity > 1
         errors.add(:variant, 'Single seat renewal is limited to a quantity of 1')
         self.quantity = 1
       end
@@ -26,5 +26,6 @@ module Spree
         end
       end
     end
+
   end
 end

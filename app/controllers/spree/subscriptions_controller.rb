@@ -2,7 +2,7 @@ require 'time'
 
 module Spree
   class SubscriptionsController < Spree::StoreController
-    before_action :find_account_subscriptions, :find_subscription_seats
+    before_action :find_account_subscriptions
     before_action :check_authorization
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_404
@@ -13,7 +13,7 @@ module Spree
     def index; end
 
     def show
-      @subscription = Spree::AccountSubscription.includes(:subscription_seats).find(params[:id])
+      @subscription = Spree::AccountSubscription.find(params[:id])
       @product = @subscription.product
 
       return if @subscription.user == spree_current_user || spree_current_user.admin?
@@ -69,12 +69,6 @@ module Spree
       @subscriptions = Spree::AccountSubscription.where(user: spree_current_user)
     end
 
-    def find_subscription_seats
-      puts("spree current user: #{spree_current_user}")
-
-      @seats = Spree::SubscriptionSeat.where(user: spree_current_user)
-    end
-
     def check_authorization
       authorize!(:index, nil, message: 'please log in') unless spree_current_user
     end
@@ -88,7 +82,6 @@ module Spree
       rescue ActiveRecord::RecordInvalid => e
         errors.push(e.record.errors.full_messages.join(", "))
       end
-
       errors
     end
   end
