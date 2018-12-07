@@ -1,9 +1,7 @@
 Spree::Core::Engine.routes.draw do
   namespace :admin do
     resources :account_subscriptions
-
     resources :products
-
     resources :users do
       member do
         get :account_subscriptions
@@ -13,9 +11,7 @@ Spree::Core::Engine.routes.draw do
 
   resources :subscriptions do
     post :processrenewal
-    resources :seats
   end
-
 
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do

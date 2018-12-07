@@ -46,7 +46,7 @@ module Spree
 
       def subscription_params
         params.require(:account_subscription).permit(
-          :email, :user_id, :subscription_seats,
+          :email, :user_id,
           :product_id, :start_datetime, :is_renewal,
           :end_datetime, :order, :num_seats,
           :renewing_subscription_id

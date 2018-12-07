@@ -1,7 +1,8 @@
 module Spree
   Product.class_eval do
+
     has_many :account_subscriptions, foreign_key: 'product_id'
-    has_one :spree_product, foreign_key: 'existing_subscription_id'
+    has_one :product, foreign_key: 'existing_subscription_id'
 
     scope :subscribable, -> { where(subscribable: true) }
     scope :unsubscribable, -> { where(subscribable: false) }
@@ -15,7 +16,8 @@ module Spree
     end
 
     def new_variant
-      variants.find { |variant| !variant.renewal }
+      variants.find{|variant| !variant.renewal }
     end
+
   end
 end
