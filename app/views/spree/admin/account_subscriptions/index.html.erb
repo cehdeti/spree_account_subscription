@@ -1,56 +1,75 @@
 <% content_for :page_title do %>
   <%= Spree.t(:listing_subscriptions) %>
 <% end %>
-<table class="index" id="listing_subscriptions">
-  <thead>
-    <tr>
-      <th><%= sort_link @search, :created_at, Spree.t(:created_at, scope: 'activerecord.attributes.spree/account_subscription') %></th>
-      <th><%= sort_link @search, :id, Spree.t(:id, scope: 'activerecord.attributes.spree/account_subscription') %></th>
-      <th><%= sort_link @search, :state, Spree.t(:state, scope: 'activerecord.attributes.spree/account_subscription') %></th>
-      <th><%= sort_link @search, :ended, Spree.t("Ended", scope: 'activerecord.attributes.spree/account_subscription') %></th>
 
-      <th><%= sort_link @search, :email, 'Subscription Owner' %></th>
+<% content_for :page_actions do %>
+  <%= button_link_to 'Create New Subscription', new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_subscription' %>
+<% end %>
 
-      <th><%= Spree.t(:lastname, scope: 'activerecord.attributes.spree/address') %></th>
-      <th data-hook="admin_subscriptions_index_header_actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @account_subscriptions.each do |subscription| %>
-      <tr>
-        <td><%= subscription.created_at.to_date %></td>
-        <td><%= link_to subscription.id, edit_object_url(subscription) %></td>
-        <td><%= Spree.t(subscription.state, scope: 'subscription_state').downcase %></td>
-        <td><%= subscription.ended? %></td>
-
-        <td><%= subscription.email %></td>
-
-        <td class="actions" data-hook="admin_subscriptions_index_row_actions">
-          <%= link_to_edit subscription, no_text: true, class: 'edit' if can?(:edit, subscription)  %>
-          &nbsp;
-          <%= link_to_delete subscription, no_text: true if can?(:delete, subscription) %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<%= paginate @account_subscriptions %>
-
-
-
-<% content_for :sidebar do %>
-    <h4>    <%= link_to 'Create New Subscription', new_object_url %></h4>
-
-  <div class="box" data-hook="admin_subscriptions_index_search">
-    <h3><%= Spree.t(:search) %></h3>
+<% content_for :table_filter do %>
+  <div data-hook="admin_subscriptions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
-      <p>
-        <%= label_tag nil, Spree.t(:email) %><br />
-        <%= f.text_field :email_cont, size: 25 %>
-      </p>
-      <div data-hook="admin_orders_index_search_buttons">
-        <p><%= button Spree.t(:search) %></p>
+      <div class="row">
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_email_cont, Spree.t(:email) %><br />
+            <%= f.text_field :email_cont, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_token_eq, Spree.t(:token) %><br />
+            <%= f.text_field :token_eq, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+      </div>
+
+      <div data-hook="admin_subscriptions_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:filter_results), 'search' %>
       </div>
     <% end %>
   </div>
 <% end %>
+
+<%= render 'spree/admin/shared/index_table_options', collection: @account_subscriptions %>
+
+<% if @account_subscriptions.any? %>
+  <table class="index table" id="listing_subscriptions">
+    <thead>
+      <tr>
+        <th><%= sort_link @search, :created_at, Spree.t(:created_at, scope: 'activerecord.attributes.spree/account_subscription') %></th>
+        <th><%= sort_link @search, :id, Spree.t(:id, scope: 'activerecord.attributes.spree/account_subscription') %></th>
+        <th><%= sort_link @search, :state, Spree.t(:state, scope: 'activerecord.attributes.spree/account_subscription') %></th>
+        <th><%= sort_link @search, :ended, Spree.t("Ended", scope: 'activerecord.attributes.spree/account_subscription') %></th>
+        <th><%= sort_link @search, :email, 'Owner' %></th>
+        <th><%= sort_link @search, :token, 'Token' %></th>
+        <th data-hook="admin_subscriptions_index_header_actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @account_subscriptions.each do |subscription| %>
+        <tr>
+          <td><%= subscription.created_at.to_date %></td>
+          <td><%= link_to subscription.id, edit_object_url(subscription) %></td>
+          <td><%= Spree.t(subscription.state, scope: 'subscription_state').downcase %></td>
+          <td><%= subscription.ended? %></td>
+          <td><%= subscription.email %></td>
+          <td><%= subscription.token %></td>
+          <td class="actions" data-hook="admin_subscriptions_index_row_actions">
+            <%= link_to_edit subscription, no_text: true, class: 'edit' if can?(:edit, subscription)  %>
+            &nbsp;
+            <%= link_to_delete subscription, no_text: true if can?(:delete, subscription) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: 'subscriptions') %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) %>!
+  </div>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table_options', collection: @account_subscriptions, simple: true %>
