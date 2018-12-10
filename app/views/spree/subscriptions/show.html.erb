@@ -170,36 +170,34 @@
 
 <script type="text/javascript">
 
-  $(document).ready(function(){
+  $(document).ready(function() {
     <% if @product.can_renew %>
-    var renewalPrice = <%= @product.renewal_variant.price_in(current_currency).amount%>;
-
+      var renewalPrice = <%= @product.renewal_variant.price_in(current_currency).amount%>;
     <% else %>
-    var renewalPrice = 0;
+      var renewalPrice = 0;
     <% end %>
 
-    var newPrice = <%= @product.new_variant.price_in(current_currency).amount %>;
+    <% if @product.new_variant %>
+      var newPrice = <%= @product.new_variant.price_in(current_currency).amount %>;
+    <% else %>
+      var newPrice = <%= @product.price_in(current_currency).amount %>;
+    <% end %>
     var currentSeats = <%= @subscription.num_seats %>;
 
-    console.log("renewal price, new price", renewalPrice,newPrice);
     var priceField = $('#subscription_price_change_seats');
 
-    $('#substription_new_num_seats').bind('keyup mouseup',(function(){
+    $('#substription_new_num_seats').bind('keyup mouseup', function() {
+      var totalSeats = $(this).val();
 
-      var totalSeats =  $(this).val();
-      console.log("Show pirce for total seats:  ", totalSeats);
-
-      var total=renewalPrice;
-      for( var i=1; i < totalSeats; i++) {
-        if( i < currentSeats) {
-          total+= renewalPrice;
+      var total = renewalPrice;
+      for (var i=1; i < totalSeats; i++) {
+        if (i < currentSeats) {
+          total += renewalPrice;
         } else {
-          total+= newPrice;
+          total += newPrice;
         }
       }
-      var str = '$'+ total.toFixed(2);
-      $(priceField).text(str);
-    }));
-
+      $(priceField).text('$'+ total.toFixed(2));
+    });
   });
 </script>
