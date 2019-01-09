@@ -6,7 +6,7 @@ module Spree
     def create_subscriptions
       self.user = Spree::User.find_by(email: email) unless user
 
-      line_items.select(&:subscribable?).each do |line_item|
+      line_items.select { |i| i.variant.subscribable? }.each do |line_item|
         # If there is an existing subscription (were doing a renewal of some sort)
         if line_item.renewing_subscription_id?
           subscription = Spree::AccountSubscription.find(line_item.renewing_subscription_id)
