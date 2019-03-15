@@ -9,6 +9,7 @@ Spree::OrderContents.class_eval do
       opts = { currency: order.currency }.merge(
         ActionController::Parameters.new(options)
           .permit(Spree::PermittedAttributes.line_item_attributes)
+          .to_h
       )
 
       line_item = order.line_items.new(
