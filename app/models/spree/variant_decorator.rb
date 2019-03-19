@@ -1,11 +1,7 @@
-module Spree
-  Variant.class_eval do
+Spree::Variant.class_eval do
+  delegate :subscribable?, to: :product
 
-    delegate :subscribable?, to: :product
-
-    def renewal
-      is_renewal
-    end
-
+  def renewal
+    is_renewal
   end
 end
