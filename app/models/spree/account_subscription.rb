@@ -39,6 +39,14 @@ class Spree::AccountSubscription < ActiveRecord::Base
     seats_taken < num_seats
   end
 
+  def seats_remaining
+    if seats_remaining?
+      num_seats - seats_taken
+    else
+      0
+    end
+  end
+
   def can_renew_seat(_email)
     true
   end

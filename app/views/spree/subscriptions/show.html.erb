@@ -1,8 +1,23 @@
 <nav id="breadcrumbs" class="col-md-12 no-padding">
   <ol class="breadcrumb" itemscope="itemscope" itemtype="https://schema.org/BreadcrumbList">
-    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/"><span itemprop="name">Home</span></a>&nbsp;</span></li>
-    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/subscriptions"><span itemprop="name">Subscriptions</span></a>&nbsp;</span></li>
-    <li class="active" itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/subscriptions/<%=@subscription.id%>"><span itemprop="name">Manage</span></a>&nbsp;</span></li>
+    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+      <span itemprop="item">
+        <a itemprop="url" href="<%= root_path %>"><span itemprop="name">Home</span></a>
+        &nbsp;
+      </span>
+    </li>
+    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+      <span itemprop="item">
+        <a itemprop="url" href="<%= subscriptions_path %>"><span itemprop="name">Subscriptions</span></a>
+        &nbsp;
+      </span>
+    </li>
+    <li class="active" itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+      <span itemprop="item">
+        <a itemprop="url" href="<%= subscription_path(@subscription) %>"><span itemprop="name">Manage</span></a>
+        &nbsp;
+      </span>
+    </li>
   </ol>
 </nav>
 
@@ -12,7 +27,7 @@
 
   <div class="col-xs-12 col-md-3">
     <h5>Product</h5>
-    <p><a href="/products/<%= @subscription.product.slug%>"><%= @subscription.product.name %></a></p>
+    <p><%= link_to @subscription.product.name, product_path(@subscription.product) %></p>
   </div>
   <div class="col-xs-12 col-md-2">
     <h5>Seats</h5>
@@ -36,12 +51,11 @@
 
 <hr/>
 <% if @product.can_renew %>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well">
 
-<div class="row">
-  <div class="col-sm-12">
-    <div class="well">
-
-      <%= form_for :order, url: "/subscriptions/#{@subscription.id}/processrenewal/" do |f| %>
+        <%= form_for :order, url: subscription_processrenewal_path(@subscription) do |f| %>
           <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
 
 
@@ -52,7 +66,7 @@
             <%= hidden_field_tag "options[is_spinoff]", false %>
 
             <div class="col-xs-6">
-              <h5 class="product-section-title">Renew Subscription (<%=display_price(@product.renewal_variant)%> per renewal seat, <%=display_price(@product.new_variant)%> per new seat)</h5>
+              <h5 class="product-section-title">Renew Subscription (<%= display_price(@product.renewal_variant) %> per renewal seat, <%= display_price(@product.new_variant) %> per new seat)</h5>
               <p>This will add a year onto the end of all seats renewed in this subscription.</p>
               <p><strong>Note:</strong> If you <em>reduce</em> the amount of seats in this subscription, your current token will expire at the end of your current subscription. Upon purhcase, you will be given a new token to use for the renewed seats.</p>
             </div>
@@ -71,105 +85,78 @@
 
             <div class="col-xs-1">
               <h6 class="product-section-title">Seats</h6>
-
               <%= number_field_tag :quantity, @subscription.num_seats, class: 'title form-control', id:'substription_new_num_seats', min: 1 %>
-
             </div>
-
 
             <div class="col-xs-3">
-
-                <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', style:'margin-top:30px;', type: :submit do %>
-                  <%= Spree.t(:add_to_cart) %>
-                <% end %>
+              <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', style:'margin-top:30px;', type: :submit do %>
+                <%= Spree.t(:add_to_cart) %>
+              <% end %>
             </div>
-
           </div>
-      <% end %>
-
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
 
-<hr/>
+  <hr/>
 <% end %>
 
 <div class="row">
-
   <div class="col-xs-12">
-
-
-
     <h3>Seats Details</h3>
-
     <p>This subscription is using <%= @subscription.seats_taken %> of <%= @subscription.num_seats %> total seats</p>
-
     <p>You may edit your current seats by specifying a different user for them.</p>
 
+    <div class="row">
+      <div class="col-xs-12 col-md-4"><h5>User</h5></div>
+      <div class="col-xs-12 col-md-4"><h5>Clear seat owner</h5></div>
+      <div class="col-xs-12 col-md-4"><h5>Action</h5></div>
+    </div>
+
+    <% @subscription.subscription_seats.each do |seat| %>
+      <%= form_for :seat, url: subscription_seat_path(@subscription, seat), method: :patch do |f| %>
+        <%= f.hidden_field 'redirect', value: request.path %>
 
         <div class="row">
-
-          <div class="col-xs-12 col-md-4"><h5>User</h5></div>
-          <div class="col-xs-12 col-md-4"><h5>Clear seat owner</h5></div>
-          <div class="col-xs-12 col-md-4"><h5>Action</h5></div>
+          <div class="col-xs-12 col-md-4">
+            <%= f.text_field 'email', value: seat.user.nil? ? '' : seat.user.email %>
+          </div>
+          <div class="col-xs-12 col-md-4">
+            <%= f.check_box 'revoke', value: false%>
+          </div>
+          <div class="col-xs-12 col-md-4">
+            <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
+              Update Seat
+            <% end %>
+          </div>
+          <hr class="col-xs-12"/>
         </div>
+      <% end %>
+    <% end %>
 
-        <% @subscription.subscription_seats.each do |seat| %>
-
-            <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats/#{seat.id}/",:method => 'PATCH' do |f| %>
-                <%= f.hidden_field "redirect", :value => request.path %>
-
-                <div class="row">
-
-                  <div class="col-xs-12 col-md-4">
-                    <%= f.text_field "email", :value => seat.user.nil? ? '' : seat.user.email%>
-                  </div>
-                  <div class="col-xs-12 col-md-4">
-                    <%= f.check_box "revoke", :value => false%>
-                  </div>
-                  <div class="col-xs-12 col-md-4">
-                    <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
-                        Update Seat
-                    <% end %>
-                  </div>
-                  <hr class="col-xs-12"/>
-                </div>
+    <% @subscription.seats_remaining.times do %>
+      <%= form_for :seat, url: subscription_seats_path(@subscription) do |f| %>
+        <%= f.hidden_field 'redirect', value: request.path %>
+        <div class="row" style="margin-top:10px;">
+          <div class="col-xs-12 col-md-4">
+            <%= f.text_field 'email', placeholder: 'Enter email address'%>
+          </div>
+          <div class="col-xs-12 col-md-4">
+          </div>
+          <div class="col-xs-12 col-md-4">
+            <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
+                Assign Seat
             <% end %>
-        <% end %>
-        <% if @subscription.num_seats > @subscription.subscription_seats.length %>
-            <% (1..@subscription.num_seats - @subscription.subscription_seats.length).each do |i| %>
-                <%= form_for :seat, url: "/subscriptions/#{@subscription.id}/seats" do |f| %>
-                    <%= f.hidden_field "redirect", :value => request.path %>
-                    <div class="row" style="margin-top:10px;">
-                      <div class="col-xs-12 col-md-4">
-                        <%= f.text_field "email", :placeholder=>'Enter email address'%>
-                      </div>
-                      <div class="col-xs-12 col-md-4">
-                      </div>
-                      <div class="col-xs-12 col-md-4">
-                        <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', type: :submit do %>
-                            Assign Seat
-                        <% end %>
-                      </div>
-                      <hr class="col-xs-12"/>
-                    </div>
-                <% end %>
-            <% end %>
-        <% end %>
-
-
-
-
+          </div>
+          <hr class="col-xs-12"/>
+        </div>
+      <% end %>
+    <% end %>
   </div>
-
-
 </div>
 
-
-
-
 <script type="text/javascript">
-
   $(document).ready(function() {
     <% if @product.can_renew %>
       var renewalPrice = <%= @product.renewal_variant.price_in(current_currency).amount%>;

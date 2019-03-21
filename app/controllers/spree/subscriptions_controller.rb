@@ -1,11 +1,11 @@
+require 'time'
+
 module Spree
   class SubscriptionsController < Spree::StoreController
-
-    require "time"
     before_action :find_account_subscriptions, :find_subscription_seats
     before_action :check_authorization
 
-    rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
     helper 'spree/products'
     include Spree::Core::ControllerHelpers::Order
@@ -13,7 +13,6 @@ module Spree
     helper_method :renewal_price
 
     def index
-      puts("ALL SUBSCRIPTION: #{@all_subscriptions}")
     end
 
     def show
@@ -24,7 +23,6 @@ module Spree
         @message = 'You do not have permissions to view this item'
         render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
       end
-
     end
 
 
@@ -74,37 +72,31 @@ module Spree
     private
 
     def find_account_subscriptions
-      @all_subscriptions = Spree::AccountSubscription.where(:user => spree_current_user)
+      @subscriptions = Spree::AccountSubscription.where(user: spree_current_user)
     end
 
     def find_subscription_seats
       puts("spree current user: #{spree_current_user}")
 
-      @seats = Spree::SubscriptionSeat.where(:user => spree_current_user)
+      @seats = Spree::SubscriptionSeat.where(user: spree_current_user)
     end
 
     def check_authorization
-      unless spree_current_user
-        authorize!(:index, nil, {:message=>'please login'})
-      end
+      authorize!(:index, nil, message: 'please log in') unless spree_current_user
     end
-
 
     def renewal_price( variant , seats)
       Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
     end
 
-
-    def populate_order( order, variant, quantity, options, errors )
-
+    def populate_order(order, variant, quantity, options, errors)
       begin
         order.contents.add(variant, quantity, options)
       rescue ActiveRecord::RecordInvalid => e
-        errors.push(  e.record.errors.full_messages.join(", "))
+        errors.push(e.record.errors.full_messages.join(", "))
       end
 
       errors
     end
-
   end
 end

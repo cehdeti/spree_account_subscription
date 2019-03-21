@@ -1,51 +1,49 @@
 <nav id="breadcrumbs" class="col-md-12 no-padding">
   <ol class="breadcrumb" itemscope="itemscope" itemtype="https://schema.org/BreadcrumbList">
-    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/"><span itemprop="name">Home</span></a>&nbsp;</span></li>
-    <li class="active" itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="item"><a itemprop="url" href="/subscriptions"><span itemprop="name">Subscriptions</span></a>&nbsp;</span></li>
+    <li itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+      <span itemprop="item">
+        <a itemprop="url" href="<%= root_path %>">
+          <span itemprop="name">Home</span>
+        </a>
+        &nbsp;
+      </span>
+    </li>
+    <li class="active" itemscope="itemscope" itemtype="https://schema.org/ListItem" itemprop="itemListElement">
+      <span itemprop="item">
+        <a itemprop="url" href="<%= subscriptions_path %>">
+          <span itemprop="name">Subscriptions</span>
+        </a>
+        &nbsp;
+      </span>
+    </li>
   </ol>
 </nav>
 
-
 <h2>My Current Subscriptions</h2>
 
-<% if @all_subscriptions.length > 0 %>
-
-
-  <div class="row">
-
-    <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
-    <div class="col-xs-12 col-md-2"><h5>Seats</h5></div>
-    <div class="col-xs-12 col-md-2"><h5>Status</h5></div>
-    <div class="col-xs-12 col-md-2"><h5>Expires</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Actions</h5></div>
-
-
-  </div>
-
-  <% @all_subscriptions.each do |sub| %>
-
-  <div class="row">
-
-    <div class="col-xs-12 col-md-3">
-      <a href="/subscriptions/<%=sub.id%>"><%= sub.product.name %></a>
-    </div>
-    <div class="col-xs-12 col-md-2">
-      <%= sub.num_seats %>
-    </div>
-    <div class="col-xs-12 col-md-2">
-      <%= sub.state %>
-    </div>
-    <div class="col-xs-12 col-md-2">
-      <%= sub.end_datetime.strftime(" %m/%d/%Y") %>
-    </div>
-    <div class="col-xs-12 col-md-3">
-      <a class="button button-sm" href="/subscriptions/<%=sub.id%>">Manage</a>
-    </div>
-
-  </div>
-
-  <%end%>
-
+<% if @subscriptions.length > 0 %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Seats</th>
+        <th>Status</th>
+        <th>Expires</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @subscriptions.each do |sub| %>
+        <tr>
+          <td><%= link_to sub.product.name, subscription_path(sub) %></td>
+          <td><%= sub.num_seats %></td>
+          <td><%= sub.state %></td>
+          <td><%= sub.end_datetime.strftime(" %m/%d/%Y") %></td>
+          <td><%= link_to 'Manage', subscription_path(sub), class: 'button button-sm' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% else %>
   <p>You do not currently have any subscriptions to manage</p>
 <% end %>
@@ -54,28 +52,28 @@
 <h2>My Current Subscription Seats</h2>
 
 <% if @seats.length > 0 %>
-
-  <div class="row">
-
-    <div class="col-xs-12 col-md-3"><h5>Product</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Status</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Expires</h5></div>
-    <div class="col-xs-12 col-md-3"><h5>Details</h5></div>
-  </div>
-
-  <% @seats.each do | seat | %>
-    <div class="row">
-      <% if seat.account_subscription %>
-      <div class="col-xs-12 col-md-3">Seat for <%= seat.account_subscription.product.name %></div>
-      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.state %></div>
-      <div class="col-xs-12 col-md-3"><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y")%></div>
-      <div class="col-xs-12 col-md-3"><a class="button button-accent button-sm" href="/subscriptions/<%=seat.account_subscription.id%>/seats/<%=seat.id%>/">View</a></div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Status</th>
+        <th>Expires</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @seats.each do | seat | %>
+        <tr>
+          <% if seat.account_subscription %>
+            <td>Seat for <%= seat.account_subscription.product.name %></td>
+            <td><%= seat.account_subscription.state %></td>
+            <td><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y") %></td>
+            <td><%= link_to 'View', subscription_seat_path(seat.account_subscription, seat), class: 'button button-accent button-sm' %></td>
+          <% end %>
+        </tr>
       <% end %>
-
-    </div>
-  <% end %>
-
+    </tbody>
+  </table>
 <% else %>
   <p>You do not currenty have any subscription seats</p>
-
 <% end %>
