@@ -34,7 +34,7 @@
 
       <% if @seat.user == @seat.account_subscription.user %>
         <p>In order to renew this seat or extend the license period, you can manage your subscription purchase here: </p>
-        <p><%= link_to 'Manage subscription', subscription_path(@seat.account_subscription), class: 'button button-primary' %></p>
+        <p><%= link_to 'Manage subscription', subscription_path(@seat.account_subscription), class: 'btn btn-primary' %></p>
       <% else %>
         <p>In order to renew this seat or extend the license period, you have two options: </p>
         <ul>
@@ -112,7 +112,7 @@
             </div>
 
             <div class="col-sm-2">
-              <%= button_tag class: 'btn button-accent', id: 'add-to-cart-button', style: 'margin-top:30px;float:right;', type: :submit do %>
+              <%= button_tag class: 'btn btn-primary', id: 'add-to-cart-button', style: 'margin-top:30px;float:right;', type: :submit do %>
                 <%= Spree.t(:add_to_cart) %>
               <% end %>
             </div>

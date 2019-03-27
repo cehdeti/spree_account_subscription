@@ -39,7 +39,7 @@
           <td><%= sub.num_seats %></td>
           <td><%= sub.state %></td>
           <td><%= sub.end_datetime.strftime(" %m/%d/%Y") %></td>
-          <td><%= link_to 'Manage', subscription_path(sub), class: 'button button-sm' %></td>
+          <td><%= link_to 'Manage', subscription_path(sub), class: 'btn btn-primary btn-sm' %></td>
         </tr>
       <% end %>
     </tbody>
@@ -68,7 +68,7 @@
             <td>Seat for <%= seat.account_subscription.product.name %></td>
             <td><%= seat.account_subscription.state %></td>
             <td><%= seat.account_subscription.end_datetime.strftime(" %m/%d/%Y") %></td>
-            <td><%= link_to 'View', subscription_seat_path(seat.account_subscription, seat), class: 'button button-accent button-sm' %></td>
+            <td><%= link_to 'View', subscription_seat_path(seat.account_subscription, seat), class: 'btn btn-primary btn-sm' %></td>
           <% end %>
         </tr>
       <% end %>
