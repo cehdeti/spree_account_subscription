@@ -10,6 +10,7 @@ class RemoveSeatsFromSubscriptionModel < ActiveRecord::Migration[5.2]
     end
 
     # drop the seats table
-    drop_table :spree_subscription_seats
+    drop_table :spree_subscription_seats do
+    end
   end
 end
