@@ -6,16 +6,8 @@ module Spree
     scope :subscribable, -> { where(subscribable: true) }
     scope :unsubscribable, -> { where(subscribable: false) }
 
-    def can_renew
-      !renewal_variant.nil?
-    end
-
-    def renewal_variant
-      variants.find(&:renewal)
-    end
-
-    def new_variant
-      variants.find { |variant| !variant.renewal }
+    def renewable?
+      variants.for_subscription_renewal.exists?
     end
   end
 end

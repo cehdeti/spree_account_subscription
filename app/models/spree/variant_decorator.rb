@@ -1,7 +1,6 @@
 Spree::Variant.class_eval do
-  delegate :subscribable?, to: :product
+  scope :for_new_subscription, -> { where(new_subscription_variant: true) }
+  scope :for_subscription_renewal, -> { where(renewal_subscription_variant: true) }
 
-  def renewal
-    is_renewal
-  end
+  delegate :subscribable?, to: :product
 end

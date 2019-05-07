@@ -38,7 +38,7 @@ module Spree
             subscription.order = self
 
             # If it is a renewal, extend the enddate
-            if line_item.variant.renewal
+            if line_item.variant.renewal_subscription_variant?
               subscription.end_datetime = enddate
 
             # Otherwise we are adding seats to this subscription

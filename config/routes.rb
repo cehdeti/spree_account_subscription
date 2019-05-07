@@ -12,7 +12,7 @@ Spree::Core::Engine.routes.draw do
   end
 
   resources :subscriptions do
-    post :processrenewal
+    post :renew, on: :member
     resources :seats
   end
 

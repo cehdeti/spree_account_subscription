@@ -1,9 +1,16 @@
 <% if f.object.subscribable? %>
-  <div data-hook="is_renewal">
-    <%= f.field_container :is_renewal, :class => ['form-group'] do %>
-        <%= f.label 'is this a renewal variant?' %><br/>
-        <%= f.check_box :is_renewal %>
-        <%= f.error_message_on :is_renewal %>
+  <div data-hook="new_subscription_variant">
+    <%= f.field_container :new_subscription_variant, :class => ['form-group'] do %>
+      <%= f.label 'New subscription variant' %><br/>
+      <%= f.check_box :new_subscription_variant %>
+      <%= f.error_message_on :new_subscription_variant %>
+    <% end %>
+  </div>
+  <div data-hook="renewal_subscription_variant">
+    <%= f.field_container :renewal_subscription_variant, :class => ['form-group'] do %>
+      <%= f.label 'Subscription renewal variant' %><br/>
+      <%= f.check_box :renewal_subscription_variant %>
+      <%= f.error_message_on :renewal_subscription_variant %>
     <% end %>
   </div>
 <% end %>

@@ -10,63 +10,57 @@ module Spree
     helper 'spree/products'
     include Spree::Core::ControllerHelpers::Order
 
-    helper_method :renewal_price
-
-    def index
-    end
+    def index; end
 
     def show
       @subscription = Spree::AccountSubscription.includes(:subscription_seats).find(params[:id])
       @product = @subscription.product
 
-      if @subscription.user != spree_current_user and not spree_current_user.admin?
-        @message = 'You do not have permissions to view this item'
-        render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
-      end
+      return if @subscription.user == spree_current_user || spree_current_user.admin?
+
+      @message = 'You do not have permissions to view this item'
+      render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
     end
 
-
     # Adds a new item to the order (creating a new order if none already exists)
-    def processrenewal
-      order    = current_order(create_order_if_necessary: true)
-      new_variant  = Spree::Variant.find(params[:new_id])
-      renewal_variant = Spree::Variant.find(params[:renewal_id])
-      subscription = Spree::AccountSubscription.find(params[:subscription_id])
+    def renew
+      subscription = @subscriptions.find(params[:id])
+      order = current_order(create_order_if_necessary: true)
+      renewal_variant = subscription.product.variants.for_subscription_renewal.find(params[:variant_id])
       quantity = params[:quantity].to_i
-      options  = params[:options] || {}
+      options  = { renewing_subscription_id: subscription.id }
       errors = []
 
-      #if its less or equal than the current number of seats, we use renewal variant for all of them
+      # If its less or equal than the current number of seats, we use renewal
+      # variant for all of them.
       if quantity <= subscription.num_seats
-
-        #if it less that current number of seats, create a new subscription as spinoff
-        if quantity < subscription.num_seats
-          options[:is_spinoff] = true
-        end
-
+        # If it less that current number of seats, create a new subscription as
+        # spinoff.
+        options[:is_spinoff] = quantity < subscription.num_seats
         errors = populate_order(order, renewal_variant, quantity, options, errors)
 
-      #otherwise, we use some of the renewal variant, and some of the new variant
+      # Otherwise, we use some of the renewal variant, and some of the new
+      # variant.
       else
-
+        new_variant = case
+                      when renewal_variant.new_subscription_variant? then renewal_variant
+                      when subscription.product.variants.active.for_new_subscription.count == 1
+                        subscription.product.variants.active.for_new_subscription.first
+                      else raise 'Cannot find new variant for subscription'
+                      end
         errors = populate_order(order, renewal_variant, subscription.num_seats, options, errors)
-
         difference = quantity - subscription.num_seats
-
         errors = populate_order(order, new_variant, difference, options, errors)
-
       end
 
-      if errors.length > 0
-        flash[:error] = errors.join(', ')
-        redirect_back_or_default(spree.root_path)
-      else
+      if errors.empty?
         respond_with(order) do |format|
           format.html { redirect_to cart_path }
         end
+      else
+        flash[:error] = errors.join(', ')
+        redirect_back_or_default(spree.root_path)
       end
-
-
     end
 
     private
@@ -85,13 +79,12 @@ module Spree
       authorize!(:index, nil, message: 'please log in') unless spree_current_user
     end
 
-    def renewal_price( variant , seats)
-      Spree::Money.new(variant.price_in(current_currency).amount * seats).to_html
-    end
-
     def populate_order(order, variant, quantity, options, errors)
       begin
         order.contents.add(variant, quantity, options)
+        order.update_line_item_prices!
+        order.create_tax_charge!
+        order.update_with_updater!
       rescue ActiveRecord::RecordInvalid => e
         errors.push(e.record.errors.full_messages.join(", "))
       end
