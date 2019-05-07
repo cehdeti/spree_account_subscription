@@ -10,7 +10,9 @@ class RemoveSeatsFromSubscriptionModel < ActiveRecord::Migration[5.2]
     end
 
     # drop the seats table
-    drop_table :spree_subscription_seats do
+    drop_table :spree_subscription_seats do |t|
+      t.references :user, index: true
+      t.references :account_subscription, index: true
     end
   end
 end
