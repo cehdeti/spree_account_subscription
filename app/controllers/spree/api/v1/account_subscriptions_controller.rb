@@ -27,7 +27,7 @@ module Spree
           end
 
           if @account_subscription && params[:show_details] && params[:show_details].to_i > 0
-            render 'show_details'
+            render 'show_details', status: status
           else
             head status
           end
