@@ -1,12 +1,12 @@
 object @account_subscription
 
-node(:product) { |a| a.product.id }
-node(:sku) { |a| a.product.sku }
-node(:user) { |a| a.user.id }
-node(:email) { |a| a.email }
-node(:state) { |a| a.state }
-node(:start) { |a| a.start_datetime}
-node(:end) { |a| a.end_datetime}
-node(:token) { |a| a.token }
-node(:is_renewal) { |a| a.is_renewal }
-node(:renewal_date) { |a| a.renewal_date }
+attributes :email, :state, :token, :num_seats, :seats_taken, :order_number,
+           :is_renewal, :renewal_date
+attributes id: :subscription, start: :start_datetime, end: :end_datetime
+glue @account_subscription.product do
+  attributes :sku
+  attributes id: :product
+end
+glue @account_subscription.user do
+  attributes id: :user
+end

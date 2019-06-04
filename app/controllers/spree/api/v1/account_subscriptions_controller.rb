@@ -4,33 +4,26 @@ module Spree
   module Api
     module V1
       class AccountSubscriptionsController < Spree::Api::BaseController
+        SUBSCRIPTION_OK_STATUS_CODE = 200
         LAPSED_SUBSCRIPTION_STATUS_CODE = 211
         NO_SUBSCRIPTION_STATUS_CODE = 212
-        SUBSCRIPTION_OK_STATUS_CODE = 200
 
         before_action :find_account_subscription
 
         def show
           authorize! :show, @account_subscription
 
-          if !@account_subscription
-            status = NO_SUBSCRIPTION_STATUS_CODE
-          else
-            dif = @account_subscription.end_datetime - DateTime.now
-            expires_in dif, public: true
-            response.headers['Expires'] = @account_subscription.end_datetime.httpdate
-            status = if DateTime.now < @account_subscription.end_datetime
-                       SUBSCRIPTION_OK_STATUS_CODE
-                     else
-                       LAPSED_SUBSCRIPTION_STATUS_CODE
-                     end
-          end
+          head NO_SUBSCRIPTION_STATUS_CODE && return unless @account_subscription
 
-          if @account_subscription && params[:show_details] && params[:show_details].to_i > 0
-            render 'show_details', status: status
-          else
-            head status
-          end
+          dif = @account_subscription.end_datetime - DateTime.now
+          expires_in dif, public: true
+          response.headers['Expires'] = @account_subscription.end_datetime.httpdate
+          status = if DateTime.now < @account_subscription.end_datetime
+                     SUBSCRIPTION_OK_STATUS_CODE
+                   else
+                     LAPSED_SUBSCRIPTION_STATUS_CODE
+                   end
+          render 'show', status: status
         end
 
         private
