@@ -74,15 +74,16 @@
 </div>
 
 <% if @seat.user != @seat.account_subscription.user %>
+  <% renewal_variant = @product.variants.for_subscription_renewal.first %>
   <div class="row" style="margin-top:20px;">
     <div class="col-sm-12">
       <div class="well">
         <%= form_for :order, url: populate_orders_path do |f| %>
           <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
             <div style="display: none;">
-              <%= radio_button_tag 'variant_id', @product.renewal_variant.id, true,
-                                  'data-price' => @product.renewal_variant.price_in(current_currency).money,
-                                  'data-in-stock' => @product.renewal_variant.can_supply?,
+              <%= radio_button_tag 'variant_id', renewal_variant.id, true,
+                                  'data-price' => renewal_variant.price_in(current_currency).money,
+                                  'data-in-stock' => renewal_variant.can_supply?,
                                   'checked' => 'checked'
               %>
             </div>
@@ -103,7 +104,7 @@
                   <h6 class="product-section-title">Price</h6>
                   <div>
                     <span class="lead price selling" itemprop="price">
-                      <%= display_price(@product.renewal_variant) %>
+                      <%= display_price(renewal_variant) %>
                     </span>
                     <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
                   </div>
