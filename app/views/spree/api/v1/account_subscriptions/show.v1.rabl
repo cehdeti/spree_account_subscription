@@ -2,7 +2,7 @@ object @account_subscription
 
 attributes :email, :state, :token, :num_seats, :seats_taken, :order_number,
            :is_renewal, :renewal_date
-attributes id: :subscription, start: :start_datetime, end: :end_datetime
+attributes id: :subscription, start_datetime: :start, end_datetime: :end
 glue :product do
   attributes :sku
   attributes id: :product
