@@ -13,7 +13,10 @@ module Spree
         def show
           authorize! :show, @account_subscription
 
-          head NO_SUBSCRIPTION_STATUS_CODE && return unless @account_subscription
+          unless @account_subscription
+            head NO_SUBSCRIPTION_STATUS_CODE
+            return
+          end
 
           dif = @account_subscription.end_datetime - DateTime.now
           expires_in dif, public: true
