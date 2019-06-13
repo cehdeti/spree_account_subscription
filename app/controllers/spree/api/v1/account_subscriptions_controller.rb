@@ -63,6 +63,7 @@ module Spree
         end
 
         def get_by_token
+          return unless params[:registration_code]
           subscription = scoped_subscriptions.find_by(token: params[:registration_code])
           return unless subscription
 
