@@ -22,10 +22,10 @@ module Spree
         create_or_update Spree.t("subscription_successfully_updated")
       end
 
-      protected
+    protected
 
       def load_data
-        @products = Product.subscribable.all.map{|product| [product.name, product.id] }
+        @products = Product.subscribable.all.map{|product| [ product.name, product.id ] }
         @users = Spree::User.all.map{|user| [ user.email, user.id ] }
       end
 
@@ -52,6 +52,7 @@ module Spree
           :renewing_subscription_id
         )
       end
+
     end
   end
 end

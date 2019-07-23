@@ -30,10 +30,6 @@ module Spree
       !canceled?
     end
 
-    def can_renew_seat(_email)
-      true
-    end
-
     def description
       if user.present?
         "#{user.email} expires #{end_datetime} token: #{token}"
@@ -43,7 +39,11 @@ module Spree
     end
 
     def self.subscribe!(opts)
-      opts.to_options!.assert_valid_keys(:email, :user, :product, :start_datetime, :end_datetime, :order, :num_seats, :is_renewal, :renewal_date)
+      opts.to_options!.assert_valid_keys(
+        :email, :user, :product, :start_datetime,
+        :end_datetime, :order, :num_seats, :is_renewal, :renewal_date
+      )
+
       existing_subscription = where(email: opts[:email],
         user_id: opts[:user].id,
         product_id: opts[:product].id,
