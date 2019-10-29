@@ -1,4 +1,4 @@
-<% if @order.state == 'complete'  %>
+<% if @order.complete?  %>
   <% subscription = @order.account_subscriptions.find_by(product: item.product) %>
   <% if subscription %>
     <div data-hook='subscription-token'>

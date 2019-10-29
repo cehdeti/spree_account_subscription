@@ -1,13 +1,5 @@
-module Spree
-  Payment.class_eval do
+Spree::Payment.class_eval do
+  delegate :create_subscriptions, to: :order
 
-    state_machine initial: :checkout do
-      after_transition to: :completed, do: :create_subscriptions!
-    end
-
-    def create_subscriptions!
-      self.order.create_subscriptions
-    end
-
-  end
+  state_machine.after_transition to: :completed, do: :create_subscriptions
 end
