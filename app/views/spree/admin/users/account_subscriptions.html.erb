@@ -13,7 +13,7 @@
   <% if @account_subscriptions.any? %>
     <%# TODO add search interface %>
 
-    <table class="index responsive" id="listing_subscriptions" data-hook>
+    <table class="index responsive table" id="listing_subscriptions" data-hook>
       <thead>
         <tr data-hook="admin_subscriptions_index_headers">
           <th><%= sort_link @search, :user, Spree.t(:user, scope: 'activerecord.attributes.spree/subscription') %></th>
