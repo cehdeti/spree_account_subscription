@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class AccountSubscriptionsController < ResourceController
-      before_action :load_options, only: [:create, :update]
+      before_action :load_options, except: [:index, :show]
 
       def index
         params[:q] ||= {}
