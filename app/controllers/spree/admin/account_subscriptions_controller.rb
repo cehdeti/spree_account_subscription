@@ -1,8 +1,7 @@
 module Spree
   module Admin
     class AccountSubscriptionsController < ResourceController
-
-      before_action :load_data, except: :index
+      before_action :load_options, only: [:create, :update]
 
       def index
         params[:q] ||= {}
@@ -24,9 +23,9 @@ module Spree
 
       protected
 
-      def load_data
-        @products = Product.subscribable.all.map{|product| [product.name, product.id] }
-        @users = Spree::User.all.map{|user| [ user.email, user.id ] }
+      def load_options
+        @products = Product.subscribable.all.pluck(:name, :id)
+        @users = Spree::User.all.pluck(:email, :id)
       end
 
     private
